@@ -1,0 +1,19 @@
+
+#Output directory
+bin/
+
+#Latex output
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.toc
+*.out
+
+#Kile project
+*.kile
+*.kilepr
+
+#Kate
+*.kate-swp

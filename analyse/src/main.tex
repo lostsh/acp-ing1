@@ -1,0 +1,145 @@
+\documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+
+%French imports
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+
+%Formating
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+%Work with images
+\usepackage{graphicx}
+
+%Margins
+\usepackage[a4paper, left=2.25cm, right=2.25cm, top=3.25cm, bottom=3.25cm]{geometry}
+
+%Links in ToC
+\usepackage[hidelinks]{hyperref}
+
+%Force figure positionning
+\usepackage{float}
+
+%Maths
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbold}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+
+%Theorems
+\usepackage{amsthm}
+
+%Listings
+\usepackage{listingsutf8}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\newcommand{\rlisting}[1]{
+    \NoAutoSpacing
+    \lstinputlisting[language=R]{#1}
+}
+
+\newcommand{\mathnote}{
+    \text{\phantom{.}}^[\footnotemark\text{\phantom{.}}^]
+}
+
+\lstset{inputencoding=utf8/latin1}
+
+%Title Page
+\pagestyle{fancy}
+\title{Rapport sur la reconnaissance
+faciale par analyse en composantes principales}
+\author{Dorian Ouakli, Benoit Verdot, Rinsai Rossetti,\\ Yohann Vernhes, Ameilie Leang}
+
+%Constants
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+%Header and footer
+\fancyhead[L]{\textbf{\thetitle}}
+\fancyhead[R]{\thedate}
+\fancyhead[C]{}
+\renewcommand{\headrulewidth}{0.7pt}
+
+\fancyfoot[L]{CY TECH}
+\fancyfoot[R]{}
+\fancyfoot[C]{\thepage /\pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.7pt}
+
+\usepackage{etoolbox}
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+
+\begin{document}
+
+    \begin{titlepage}
+    \newgeometry{top=2cm}
+        \begin{figure}[h]
+        \centering
+            \includegraphics[scale=0.17]{assets/logocytech.png}
+        \end{figure}
+
+    \vspace{3cm}
+
+    %Title Page
+    \begin{center}
+        \huge{\textbf{\thetitle}} \\
+        \vspace{0.7cm}
+        \Large{\thedate} \\
+        \vspace{10cm}
+        \Large{Yohann  \textsc{VERNHES}, Rinsai  \textsc{ROSSETTI}, Ameilie  \textsc{LEANG}, Dorian  \textsc{OUAKLI}, Benoit  \textsc{VERDOT} \\ ING1 Info -- 3}
+    \end{center}
+    \end{titlepage}
+    \restoregeometry
+
+    \clearpage
+
+    %Table of Contents
+    \tableofcontents
+    \clearpage
+
+    \input{chapter_1/main.tex}
+    \clearpage
+
+    \input{chapter_2/main.tex}
+    \clearpage
+
+    \input{chapter_3/main.tex}
+    \clearpage
+
+    \input{chapter_4/main.tex}
+    \clearpage
+
+    \input{chapter_5/main.tex}
+    \clearpage
+
+\end{document}
