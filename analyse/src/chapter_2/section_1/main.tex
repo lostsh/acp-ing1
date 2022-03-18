@@ -1,0 +1,23 @@
+\subsection{L'ACP et ses outils}
+Considérons un jeu de données à $n$ variables quantitatives et $N$ individus.
+Les individus seront alors représentés par des points de $\mathbb{R}^n$.
+On notera $\forall i\in\llbracket1,N\rrbracket, X_i$ le ième individu de
+notre jeu de données.
+
+L'objectif de l'Analyse en Composante Principale (ACP) est de trouver une
+projection permettant de diminuer au maximum la dimension de l'espace des
+données $\mathbb{R}^n$ tout en limitant la quantité d'information perdue.
+
+On notera F l'image de $\mathbb{R}^n$ par cette projection.
+Afin de limiter la quantité d'information perdue, on introduit un critère
+permettant de la mesurer: L'inertie $I$ qui se définit par
+$$ I =
+\sum_{k=1}^{N}
+\left\|
+X_k -
+\left(
+\frac1N\sum_{i=1}^N
+\left(X_i\right)_j
+\right)_{j\in\llbracket1,n\rrbracket}
+\right\|$$
+
