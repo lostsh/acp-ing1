@@ -15,13 +15,11 @@ ${BIN}/out.pdf: src/main.pdf
 	cp src/main.pdf ${BIN}/out.pdf
 
 # Build the main pdf
-src/main.pdf: src/main.tex ${TEX} ${RPLOTS}
+src/main.pdf: src/main.tex ${TEX}
 	mkdir -p ${BIN} # Create output dir
 	cd src && latexmk -pdf -interaction=nonstopmode main.tex # Compile main pdf
 # Build the plot pdf
 
-%/Rplots.pdf: %/plot.R
-	cd $(dir $<) && (R --no-save < $(notdir $<))
 
 # Clean built files
 clean:
