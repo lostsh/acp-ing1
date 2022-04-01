@@ -17,3 +17,7 @@ bin/
 
 #Kate
 *.kate-swp
+
+#InteliJ
+**.idea
+**java.iml
