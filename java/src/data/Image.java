@@ -42,4 +42,26 @@ public class Image {
     public void show() {
         imPlus.show();
     }
+
+    /**
+     * Extract ImageVector from Image
+     * @return ImageVector of the Image
+     */
+    public ImageVector getVector(){
+        ImageVector iv = new ImageVector();
+        // TODO: extract vector from image
+        byte[] pixels = getPixels();
+
+        int width = getWidth();
+        int height = getHeight();
+
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                //convert byte pixel value to Integer
+                int pix = pixels[ i*width + j ] & 0xff;
+                iv.add(pix);
+            }
+        }
+        return iv;
+    }
 }

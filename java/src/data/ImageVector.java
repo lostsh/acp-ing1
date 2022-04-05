@@ -43,6 +43,10 @@ public class ImageVector {
     public double get(int index) {
         return vector.get(index);
     }
+    
+    public double set(int index, Double val) {
+        return vector.set(index, val);
+    }
 
 
     /**
@@ -77,7 +81,7 @@ public class ImageVector {
     @Override
     public String toString() {
         StringBuilder vec = new StringBuilder("ImageVector(");
-        vector.forEach(i -> vec.append(i + ","));
+        vector.forEach(i -> vec.append("\n" + i + ","));
         return getDimension() > 0 ? vec.deleteCharAt(vec.length() - 1).append(")").toString() : "ImageVector(Empty)";
     }
 }
