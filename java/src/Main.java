@@ -12,9 +12,9 @@ public class Main {
         System.out.println("Hello fraises");
 
         mappy = Acp.extractPicturesVectors("../BDD/cropped&gray/learn");
-        
-        ImageVector averageFace = averageFace(mappy);
-        System.out.println(averageFace.toString());
+        printAll(mappy);
+        //ImageVector averageFace = averageFace(mappy);
+        //System.out.println(averageFace.toString());
 
         System.out.println("Done");
         
@@ -60,14 +60,11 @@ public class Main {
         /* Prints every Image Vector
          * Just for testing
          */
-    	ArrayList<ImageVector> vects = new ArrayList<ImageVector>();
-    	
         for (String s: mappy.keySet()) {
         	System.out.println(s);
-        	vects = mappy.get(s);
-        	for (int i = 0; i<vects.size(); i++) {
-        		System.out.println(vects.get(i).toString());
-        	}
+        	for(ImageVector v : mappy.get(s)){
+				System.out.println("\t"+v);
+			}
         }
     }
     
