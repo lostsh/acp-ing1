@@ -22,6 +22,8 @@ public class Main {
         System.out.println("\t\t- "+averageFace.toString().substring(0, 45)+" [...])");
         System.out.printf("[*]\tAverage compute time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
 
+        saveVector(averageFace, "../BDD/cropped&gray/average.jpg");
+
         System.out.println("[+]\t Done");
     }
 
@@ -33,7 +35,7 @@ public class Main {
     public static ImageVector averageFace(HashMap<String, ArrayList<ImageVector>> mappy) {
         ImageVector averageFace = new ImageVector();
 
-        // get vector length
+        // get vector length and init
         int vectorSize = (mappy.values().stream().findFirst().get()).stream().findFirst().get().getDimension();
         for (int j = 0; j<vectorSize; j++) averageFace.add(0);
 
@@ -47,7 +49,7 @@ public class Main {
                 //average pixel value is : value + (value / numberOfVectors)
                 //if(v.getDimension() != vectorSize) //TODO : throw new ImageVectorSizeException...
                 for(int i=0;i<v.getDimension();i++){
-                    averageFace.set(i, (v.get(i)/numberOfVectors) + v.get(i));
+                    averageFace.set(i, (v.get(i)/numberOfVectors) + averageFace.get(i));
                 }
             }
         }
@@ -68,5 +70,29 @@ public class Main {
                 System.out.println("\t\t- " + vector.substring(0, 45) + " [...] " + vector.substring(vector.length() - 45));
             }
         }
+    }
+
+    /**
+     * Save an ImageVector.
+     * Used to link between low level Image class and ImageVector(bean)
+     * @param vector ImageVector of the image to save.
+     * @param path file already existing.
+     */
+    public static void saveVector(ImageVector vector, String path) {
+        Image image = new Image(path);
+
+        byte[] pixels = image.getPixels();
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                pixels[i * width + j] = (byte) vector.get(i * width + j);
+            }
+        }
+        // apply modifications to Image
+        image.setPixels(pixels);
+        image.save();
     }
 }
