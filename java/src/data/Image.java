@@ -44,6 +44,13 @@ public class Image {
     }
 
     /**
+     * Save Image into file system.
+     */
+    public void save() {
+        IJ.save(imPlus, imPlus.getOriginalFileInfo().getFilePath());
+    }
+
+    /**
      * Extract ImageVector from Image
      * @return ImageVector of the Image
      */
