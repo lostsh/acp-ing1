@@ -22,7 +22,11 @@ public class Main {
         System.out.println("\t\t- "+averageFace.toString().substring(0, 45)+" [...])");
         System.out.printf("[*]\tAverage compute time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
 
-        saveVector(averageFace, "../BDD/cropped&gray/average.jpg");
+        //TODO : for later: better to not use Image class there
+        // we may put Image processing func into it own class later
+        Image i = getImage(averageFace, "../BDD/cropped&gray/average.jpg");
+        i.show();
+        i.save();
 
         System.out.println("[+]\t Done");
     }
@@ -73,12 +77,12 @@ public class Main {
     }
 
     /**
-     * Save an ImageVector.
+     * Convert an ImageVector into an Image.
      * Used to link between low level Image class and ImageVector(bean)
-     * @param vector ImageVector of the image to save.
-     * @param path file already existing.
+     * @param vector ImageVector of the image to convert.
+     * @param path already existing file for the Image.
      */
-    public static void saveVector(ImageVector vector, String path) {
+    public static Image getImage(ImageVector vector, String path){
         Image image = new Image(path);
 
         byte[] pixels = image.getPixels();
@@ -93,6 +97,6 @@ public class Main {
         }
         // apply modifications to Image
         image.setPixels(pixels);
-        image.save();
+        return image;
     }
 }
