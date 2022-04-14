@@ -21,3 +21,4 @@ bin/
 #InteliJ
 **.idea
 **java.iml
+/.metadata/
