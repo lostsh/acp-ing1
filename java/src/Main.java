@@ -17,7 +17,7 @@ public class Main {
         System.out.printf("[*]\tExtraction time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
         
         //print all ImageVectors from Learn
-        //printAll(mappy);
+        printAll(mappy);
 
         startTime = System.currentTimeMillis();
         
