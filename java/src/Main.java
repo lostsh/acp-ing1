@@ -38,7 +38,8 @@ public class Main {
         /****/
         /*this part tests the comparisons of photos*/
         
-        double epsilon = 10400;
+        double epsilon = 10000;
+        double successrate1, successrate2, successrate3;
         
         //this tests all images in Learn against all other images in Learn
         //test(mappy, epsilon);
@@ -61,13 +62,16 @@ public class Main {
         shouldBeMaybe = Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn");
         
         // works perfectly
-        testDifferentBDDS(shouldBeYes, mappy, epsilon);
+        successrate1 = testDifferentBDDS(shouldBeYes, mappy, epsilon);
         //works perfectly
-        testDifferentBDDS(shouldBeNo, mappy, epsilon);
+        successrate2 = testDifferentBDDS(shouldBeNo, mappy, epsilon);
         //actually works OK with epsilon=10000
-        testDifferentBDDS(shouldBeMaybe, mappy, epsilon);
+        successrate3 = testDifferentBDDS(shouldBeMaybe, mappy, epsilon);
         
-
+        System.out.println("Success rate for photosinLearn : " + successrate1*100 + "%");
+        System.out.println("Success rate for peoplenotinLearn : " + successrate2*100 + "%");
+        System.out.println("Success rate for newphotosofpeopleinLearn : " + successrate3*100 + "%");
+        
         System.out.println("[+]\t Done");
     }
 
@@ -171,29 +175,59 @@ public class Main {
      * @param epsilon how close we want the image to be to consider it's the same person.
      */
     //THIS ONE TESTS EVERYTHING IN ONE BDD AGAINST ANOTHER BDD (Learn)
-    public static void testDifferentBDDS(HashMap<String, ArrayList<ImageVector>> test, HashMap<String, ArrayList<ImageVector>> learn, double epsilon){
-        for (String s : test.keySet()) {
+    //RETURNS SUCCESS RATE
+    public static double testDifferentBDDS(HashMap<String, ArrayList<ImageVector>> test, HashMap<String, ArrayList<ImageVector>> learn, double epsilon){
+        String output = new String("");
+        int id;
+        
+        double wrong = 0;
+        double right = 0;
+        
+        
+    	for (String s : test.keySet()) {
         	//iterate through all images for that person
             for (ImageVector v : test.get(s)) {
             	System.out.println("Person with ID number " + s + " is getting tested");
-            	System.out.println(compare(v, learn, epsilon));
+            	id=compare(v, learn, epsilon);
+            	System.out.println(output);
+            	
+            	//assuming that ID numbers for people not in learn will be greater than ID numbers for people in Learn
+            	if (Integer.parseInt(s)<=(learn.keySet()).size()) {
+            		if (id==Integer.parseInt(s)) {
+            			right++;
+            		} else {
+            			wrong++;
+            		}
+            	} else {
+            		 {
+            			if (id==-1) {
+            				right++;
+            			} else {
+            				wrong++;
+            			}
+            		}
+            	}
+            	
             }
         }
+    	return (right/(right+wrong));
     }
     
     /**
      * Compares an ImageVector with all ImageVectors in Learn.
      * Can be used for final comparison once the ACP part is ready
-     * Returns a String with the person's ID if found, a rejection String if not found
+     * Returns the person's ID if found, -1 if not found
      * Test with different values of epsilon
      * @param test ImageVector of the image to compare.
      * @param bdd map of all ImageVecotrs in Learn.
      * @param epsilon how close we want the image to be to consider it's the same person.
      */
-    public static String compare(ImageVector test, HashMap<String, ArrayList<ImageVector>> bdd, double epsilon){
+    public static int compare(ImageVector test, HashMap<String, ArrayList<ImageVector>> bdd, double epsilon){
         String res = new String("");
         boolean found = false;
+        ArrayList<Integer> mode = new ArrayList<Integer>();
         int i;
+        int id = -1;
         //iterate through all people in Learn
         for (String s : bdd.keySet()) {
         	i = 1;
@@ -202,7 +236,9 @@ public class Main {
             for (ImageVector v : bdd.get(s)) {
             	//using euclidean distance
                 if (v.compare(test)<epsilon) {
+                	//for debugging and adjustments
                 	res += " *** Test image matches person with ID number " + s + " (image number " + i + ")\n";
+                	mode.add(Integer.parseInt(s));
                 	found = true;
                 }
                 i++;
@@ -210,7 +246,34 @@ public class Main {
         }
         if (!found) {
         	res = "No, person not found in the main database\n";
+        } else {
+        	id = calculateMode(mode);
+        	res += "\tMATCH FOUND: person with ID number " + id + "\n";
         }
-        return res;
+        System.out.println(res);
+        return id;
+    }
+    
+    /**
+     * Compares mode for compare method
+     * @param allID ArrayList of Integers, for each ID match found.
+     */
+    public static int calculateMode(ArrayList<Integer> allID) {
+        int maxValue=0;
+        int maxCount=0;
+
+        for (int i = 0; i < allID.size(); ++i) {
+            int count = 0;
+            for (int j = 0; j < allID.size(); ++j) {
+                if (allID.get(j).equals(allID.get(i))){
+                	count++;
+                }
+            }
+            if (count > maxCount) {
+                maxCount = count;
+                maxValue = allID.get(i);
+            }
+        }
+        return maxValue;
     }
 }
