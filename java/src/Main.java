@@ -61,9 +61,9 @@ public class Main {
         shouldBeMaybe = Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn");
         
         // works perfectly
-        //testDifferentBDDS(shouldBeYes, mappy, epsilon);
+        testDifferentBDDS(shouldBeYes, mappy, epsilon);
         //works perfectly
-        //testDifferentBDDS(shouldBeNo, mappy, epsilon);
+        testDifferentBDDS(shouldBeNo, mappy, epsilon);
         //actually works OK with epsilon=10000
         testDifferentBDDS(shouldBeMaybe, mappy, epsilon);
         
