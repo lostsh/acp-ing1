@@ -1,47 +1,102 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import data.Image;
 import data.ImageVector;
+import math.Acp;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello fraises");
+        System.out.println("[+]\t Start extracting faces");
+        long startTime = System.currentTimeMillis();
 
-        /* Just an example of how it works :
-         * Use Image class to import the file
-         * Then we use Image vector to manipulate Image.
-         * (Once you extracted the vector from the Image,
-         * you do not manipulate the Image object)
-         */
-        Image example = new Image("../BDD/Learn/2/20220317_132350.jpg");
+        HashMap<String, ArrayList<ImageVector>> mappy;
+        mappy = Acp.extractPicturesVectors("../BDD/cropped&gray/learn");
 
-        // gui from IJ lib, do not use that, its juste for example
-        // to show you what it look like
-        example.show();
+        System.out.printf("[*]\tExtraction time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
 
-        /* This is how to manipulate an Image
-         * from grey shades Image to b&w Image
-         */
-        byte[] pixels = example.getPixels();
+        printAll(mappy);
 
-        int width = example.getWidth();
-        int height = example.getHeight();
+        startTime = System.currentTimeMillis();
+        ImageVector averageFace = averageFace(mappy);
+        System.out.println("\t\t- "+averageFace.toString().substring(0, 45)+" [...])");
+        System.out.printf("[*]\tAverage compute time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
 
-        //Iterate over the picture
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
+        //TODO : for later: better to not use Image class there
+        // we may put Image processing func into it own class later
+        Image i = getImage(averageFace, "../BDD/cropped&gray/average.jpg");
+        i.show();
+        i.save();
 
-                //convert byte pixel value to Integer
-                int pix = pixels[ i*width + j ] & 0xff;
+        System.out.println("[+]\t Done");
+    }
 
-                //if px value greater than 128 its black
-                // 128 is an arbitrary value
-                if (pix <= 128)
-                    pixels[i * width + j] = (byte) 0; // white
-                else
-                    pixels[i * width + j] = (byte) 255; // black
+    /**
+     * Compute average face from ImageVectors.
+     * @param mappy Map of ArrList of ImageVector.
+     * @return ImageVector average face.
+     */
+    public static ImageVector averageFace(HashMap<String, ArrayList<ImageVector>> mappy) {
+        ImageVector averageFace = new ImageVector();
+
+        // get vector length and init
+        int vectorSize = (mappy.values().stream().findFirst().get()).stream().findFirst().get().getDimension();
+        for (int j = 0; j<vectorSize; j++) averageFace.add(0);
+
+        // get total number of vectors into the map
+        double numberOfVectors = mappy.get(mappy.keySet().stream().findFirst().get()).size()*mappy.size();
+        System.out.println("Total number of vectors : "+numberOfVectors);
+
+        // Iterate over vectors to compute average face
+        for (String s: mappy.keySet()) { // each person
+            for(ImageVector v : mappy.get(s)){ // each vector
+                //average pixel value is : value + (value / numberOfVectors)
+                //if(v.getDimension() != vectorSize) //TODO : throw new ImageVectorSizeException...
+                for(int i=0;i<v.getDimension();i++){
+                    averageFace.set(i, (v.get(i)/numberOfVectors) + averageFace.get(i));
+                }
             }
         }
 
+        return  averageFace;
+    }
+
+    /**
+     * Display all ImageVector in Sys out.
+     * @param mappy Map of ArrList of ImageVector
+     */
+    public static void printAll(HashMap<String, ArrayList<ImageVector>> mappy) {
+        // sout image vectors
+        for (String s : mappy.keySet()) {
+            System.out.printf("\t- Face Name :[%s] => %d vectors\n", s, mappy.get(s).size());
+            for (ImageVector v : mappy.get(s)) {
+                String vector = v.toString();
+                System.out.println("\t\t- " + vector.substring(0, 45) + " [...] " + vector.substring(vector.length() - 45));
+            }
+        }
+    }
+
+    /**
+     * Convert an ImageVector into an Image.
+     * Used to link between low level Image class and ImageVector(bean)
+     * @param vector ImageVector of the image to convert.
+     * @param path already existing file for the Image.
+     */
+    public static Image getImage(ImageVector vector, String path){
+        Image image = new Image(path);
+
+        byte[] pixels = image.getPixels();
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                pixels[i * width + j] = (byte) vector.get(i * width + j);
+            }
+        }
         // apply modifications to Image
-        example.setPixels(pixels);
+        image.setPixels(pixels);
+        return image;
     }
 }
