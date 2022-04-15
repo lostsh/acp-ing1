@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
+import Jama.Matrix;
+
 /**
  * Contain vectorized image.
  * Bean to be used everywhere we need to manipulate the image.
@@ -46,6 +48,18 @@ public class ImageVector {
     
     public double set(int index, Double val) {
         return vector.set(index, val);
+    }
+    
+    public Matrix toMatrix() {
+    	int taille = this.getDimension();
+    	Matrix mat = new Matrix( taille, 1);
+    	
+    	for( int i = 0; i < taille; i++ ) {
+    		
+    		mat.set(i, 0, this.get(i));
+    	}
+    	
+    	return mat;
     }
     
     public ImageVector addSoustract(ImageVector vec2, boolean soustract) {

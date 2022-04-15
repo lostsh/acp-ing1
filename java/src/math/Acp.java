@@ -123,14 +123,6 @@ public class Acp {
     	return mat;
     }
     
-    public static EigenvalueDecomposition eigenDecompo( Matrix transMat ) {
-    	Matrix mat = transMat.transpose();
-    	Matrix smallMatrix = prodPerso(transMat, mat );
-    	EigenvalueDecomposition Structure = smallMatrix.eig();
-    	
-    	return Structure;
-    }
-    
     public static Matrix prodPerso( Matrix mat1, Matrix mat2 ) {
     	int nbLigne1 = mat1.getRowDimension();
     	int nbLigne2= mat2.getRowDimension();
@@ -151,31 +143,6 @@ public class Acp {
     	return res;
     }
     
-    public static void test1(Matrix transMat) {
-    	Matrix mat = transMat.transpose();
-    	Matrix L = prodPerso(transMat, mat);
-    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
-        Matrix V = Structure.getV();
-        
-    	Matrix vector1 = V.getMatrix(0, V.getRowDimension() - 1, 1, 1);
-    	Matrix res = prodPerso(L, vector1);
-    	
-    	vector1.print(0, 0);
-    	res.print(0, 0);
-    	L.print(0, 0);
-    	}
-    
-    public static void test2(Matrix transMat) {
-    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
-        Matrix V = Structure.getV();
-        Matrix D = Structure.getD();
-        
-    	V.print(0, 0);
-    	D.print(0, 0);
-
-    	}
-    
-    
     // Pour tester
     public static void main(String[] args) {
     	HashMap<String, ArrayList<ImageVector>> mappy;
@@ -183,9 +150,8 @@ public class Acp {
         
         mappy = normalizeVector(mappy);
         
-        Matrix transMat = createMatrixTrans(mappy);
-        test1(transMat);
-        test2(transMat);
+        Matrix transA = createMatrixTrans(mappy);
+        eigenMatrix M = new eigenMatrix( transA.transpose(), 10 );
         System.out.println("Done");
     }
     
