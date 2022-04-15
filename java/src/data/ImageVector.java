@@ -74,17 +74,31 @@ public class ImageVector {
     }
 
     /**
-     * Compare two ImageVector and return the distance between.
+     * Compare two ImageVector and return the Euclidean distance between.
      *
      * @return distance between two ImageVector.
      */
-    public double compare(ImageVector iv) {
+    public double distanceEuclidean(ImageVector iv) {
         int size = min(this.getDimension(), iv.getDimension());
         double sum = 0;
         for (int i = 0; i < size; i++) {
             sum += pow((this.get(i) - iv.get(i)), 2);
         }
         return sqrt(sum);
+    }
+    
+    /**
+     * Compare two ImageVector and return the Manhattan distance between.
+     *
+     * @return distance between two ImageVector.
+     */
+    public double distanceManhattan(ImageVector iv) {
+        int size = min(this.getDimension(), iv.getDimension());
+        double sum = 0;
+        for (int i = 0; i < size; i++) {
+            sum += abs(this.get(i) - iv.get(i));
+        }
+        return (sum);
     }
 
     /**

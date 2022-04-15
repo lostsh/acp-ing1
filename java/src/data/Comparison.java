@@ -95,7 +95,7 @@ public class Comparison {
         	//iterate through all images for that person
             for (ImageVector v : bdd.get(s)) {
             	//using euclidean distance
-                if (v.compare(test)<epsilon) {
+                if (v.distanceEuclidean(test)<epsilon) {
                 	//for debugging and adjustments
                 	res += " *** Test image matches person with ID number " + s + " (image number " + i + ")\n";
                 	mode.add(Integer.parseInt(s));

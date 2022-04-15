@@ -38,7 +38,13 @@ public class Main {
         /****/
         /*this part tests the comparisons of photos using the class Comparison in package data*/
         
-        double epsilon = 10000;
+        //change the method call in Comparison.compare to switch distance methods
+        //for Euclidean distance
+        double epsilon = 10000; 
+        
+        //for Manhattan distance
+        //double epsilon = 2500000; 
+        
         double successrate1, successrate2, successrate3;
         
         //these photos are exactly the same as random ones in Learn
