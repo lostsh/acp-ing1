@@ -51,7 +51,9 @@ public class Comparison {
             	id=compare(v, learn, epsilon);
             	System.out.println(output);
             	
-            	//assuming that ID numbers for people not in learn will be greater than ID numbers for people in Learn
+            	//assuming that ID numbers for people not in learn will be greater than the max ID number for people in Learn
+            	//e.g. if there are 20 people in Learn, then they will have IDs between 1 and 20, 
+            	//and therefore any ID number greater than 20 means the person is not in Learn
             	if (Integer.parseInt(s)<=(learn.keySet()).size()) {
             		if (id==Integer.parseInt(s)) {
             			right++;
@@ -95,7 +97,7 @@ public class Comparison {
         	//iterate through all images for that person
             for (ImageVector v : bdd.get(s)) {
             	//using euclidean distance
-                if (v.compare(test)<epsilon) {
+                if (v.distanceEuclidean(test)<epsilon) {
                 	//for debugging and adjustments
                 	res += " *** Test image matches person with ID number " + s + " (image number " + i + ")\n";
                 	mode.add(Integer.parseInt(s));
