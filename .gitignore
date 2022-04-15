@@ -21,7 +21,10 @@ bin/
 #InteliJ
 **.idea
 **java.iml
+<<<<<<< HEAD
 
 #Eclipse
 .metadata
 .project
+
+/.metadata/

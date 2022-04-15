@@ -7,6 +7,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Jama.Matrix;
+import Jama.EigenvalueDecomposition;
+
 public class Acp {
 
     /**
@@ -47,4 +50,147 @@ public class Acp {
         return file.contains(".png") || file.contains(".jpg") || file.contains(".PNG") || file.contains(".JPG")
                 || file.contains(".jpeg") || file.contains(".JPEG");
     }
+    
+    /**
+     * Compute average face from ImageVectors.
+     * @param mappy Map of ArrList of ImageVector.
+     * @return ImageVector average face.
+     */
+    public static ImageVector averageFace(HashMap<String, ArrayList<ImageVector>> mappy) {
+        ImageVector averageFace = new ImageVector();
+
+        // get vector length and init
+        int vectorSize = (mappy.values().stream().findFirst().get()).stream().findFirst().get().getDimension();
+        for (int j = 0; j<vectorSize; j++) averageFace.add(0);
+
+        // get total number of vectors into the map
+        int numberOfVectors = 0;
+        for( String key : mappy.keySet() ) numberOfVectors += mappy.get(key).size();
+        System.out.println("Total number of vectors : "+numberOfVectors );
+
+        // Iterate over vectors to compute average face
+        for (String s: mappy.keySet()) { // each person
+            for(ImageVector v : mappy.get(s)){ // each vector
+                //average pixel value is : value + (value / numberOfVectors)
+                //if(v.getDimension() != vectorSize) //TODO : throw new ImageVectorSizeException...
+                for(int i=0;i<v.getDimension();i++){
+                    averageFace.set(i, (v.get(i)/numberOfVectors) + averageFace.get(i));
+                }
+            }
+        }
+
+        return  averageFace;
+    }
+    
+    public static HashMap<String, ArrayList<ImageVector>> normalizeVector(HashMap<String, ArrayList<ImageVector>> map) {
+    	@SuppressWarnings("unchecked")
+		HashMap<String, ArrayList<ImageVector>> newMap = (HashMap<String, ArrayList<ImageVector>>)map.clone();
+    	ImageVector avgVec = averageFace(map);
+    	ImageVector res = new ImageVector();
+    	
+    	for( String key : map.keySet() ) {
+    		for( int i = 0; i < map.get(key).size(); i++ ) {
+    			res = map.get(key).get(i).addSoustract(avgVec, true);
+    			newMap.get(key).set(i, res);
+    		}
+    	}
+    	return newMap;
+    }
+    
+    public static Matrix createMatrixTrans( HashMap<String, ArrayList<ImageVector>> map ) {
+    	Matrix mat;
+    	int nbLigne = 0;
+    	int nbColonne = 0;
+    	int res = 0;
+    	
+    	for( String key : map.keySet() ) {
+    		if( nbColonne == 0 ) {
+    			nbColonne = map.get(key).get(0).getDimension();
+    		}
+    		nbLigne += map.get(key).size();
+    	}
+    	
+    	mat = new Matrix( nbLigne, nbColonne);
+    	
+    	for( String key : map.keySet() ) {
+    		for( int i = 0; i < map.get(key).size(); i++ ) {
+    			for( int j = 0; j < nbColonne; j++ ) {
+    				mat.set(res + i, j, map.get(key).get(i).get(j) );
+    			}
+    		}
+			res += map.get(key).size();
+    	}
+    	return mat;
+    }
+    
+    public static EigenvalueDecomposition eigenDecompo( Matrix transMat ) {
+    	Matrix mat = transMat.transpose();
+    	Matrix smallMatrix = prodPerso(transMat, mat );
+    	EigenvalueDecomposition Structure = smallMatrix.eig();
+    	
+    	return Structure;
+    }
+    
+    public static Matrix prodPerso( Matrix mat1, Matrix mat2 ) {
+    	int nbLigne1 = mat1.getRowDimension();
+    	int nbLigne2= mat2.getRowDimension();
+    	int nbColonne2 = mat2.getColumnDimension();
+    	Matrix res = new Matrix(nbLigne1, nbColonne2);
+    	double somme = 0;
+    	
+    	for( int k = 0; k< nbLigne1; k++ ) {
+    		for( int i = 0; i< nbColonne2; i++ ) {
+    			somme = 0;
+    			for( int j = 0; j< nbLigne2; j++ ) {
+    	    		somme += mat1.get(k, j) * mat2.get(j, i);
+    	    	}
+    			res.set( k, i, somme);
+        	}
+    	}
+    	
+    	return res;
+    }
+    
+    public static void test1(Matrix transMat) {
+    	Matrix mat = transMat.transpose();
+    	Matrix L = prodPerso(transMat, mat);
+    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
+        Matrix V = Structure.getV();
+        
+    	Matrix vector1 = V.getMatrix(0, V.getRowDimension() - 1, 1, 1);
+    	Matrix res = prodPerso(L, vector1);
+    	
+    	vector1.print(0, 0);
+    	res.print(0, 0);
+    	L.print(0, 0);
+    	}
+    
+    public static void test2(Matrix transMat) {
+    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
+        Matrix V = Structure.getV();
+        Matrix D = Structure.getD();
+        
+    	V.print(0, 0);
+    	D.print(0, 0);
+
+    	}
+    
+    
+    // Pour tester
+    public static void main(String[] args) {
+    	HashMap<String, ArrayList<ImageVector>> mappy;
+        mappy = extractPicturesVectors("../BDD/cropped&gray/testJava");
+        
+        mappy = normalizeVector(mappy);
+        
+        Matrix transMat = createMatrixTrans(mappy);
+        test1(transMat);
+        test2(transMat);
+        System.out.println("Done");
+    }
+    
+    
+    
 }
+
+

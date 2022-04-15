@@ -47,6 +47,21 @@ public class ImageVector {
     public double set(int index, Double val) {
         return vector.set(index, val);
     }
+    
+    public ImageVector addSoustract(ImageVector vec2, boolean soustract) {
+    	ImageVector res = new ImageVector();
+    	
+        if( soustract ) {
+        	for( int i = 0; i<vec2.getDimension(); i++ ) {
+        		res.add( this.get(i) - vec2.get(i) );
+        	}
+        } else {
+        	for( int i = 0; i<vec2.getDimension(); i++ ) {
+        		res.add( this.get(i) + vec2.get(i) );
+        	}
+        }
+        return res;
+    }
 
 
     /**
