@@ -38,7 +38,6 @@ public class eigenMatrix {
 		
 		for( int i = 0; i < k; i++ ) eigenValues[ i ] = D.get( D.getColumnDimension() - i - 1 , D.getColumnDimension() - i - 1 );
 		
-		for( int i = 0; i < eigenValues.length; i++ ) System.out.println( eigenValues[i] );
 		
 		Matrix projector = A.times(pseudoVectors).inverse();
 		

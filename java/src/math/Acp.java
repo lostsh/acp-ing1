@@ -45,6 +45,31 @@ public class Acp {
         if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" files.");
         return vectors;
     }
+    
+    public static HashMap<String, ArrayList<ImageVector>> projectImages(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+    	for (String ivName : map.keySet()) {
+    		ArrayList<ImageVector> ivList = map.get(ivName);
+    		ArrayList<ImageVector> vList = new ArrayList<ImageVector>();
+    		for (ImageVector iv : ivList) {
+    			ImageVector v = new ImageVector();
+    			Matrix pv = M.getProjecitonMatrix().times(iv.toMatrix());
+    			for (int i = 0; i<pv.getRowDimension(); i++) {
+    				v.add(pv.get(i, 0));
+    			}
+    			vList.add(v);
+    		}
+    		vectors.put(ivName, vList);
+    	}
+        return vectors;
+    }
+    
+    public static eigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> mappy = normalizeVector(map);
+    	Matrix transA = createMatrixTrans(mappy);
+        return (new eigenMatrix( transA.transpose(), k ));
+    	
+    }
 
     public static boolean isImage(String file){
         return file.contains(".png") || file.contains(".jpg") || file.contains(".PNG") || file.contains(".JPG")

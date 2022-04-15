@@ -4,6 +4,7 @@ import java.util.HashMap;
 import data.Image;
 import data.ImageVector;
 import math.Acp;
+import math.eigenMatrix;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,12 +14,13 @@ public class Main {
         //get images from Learn
         HashMap<String, ArrayList<ImageVector>> mappy;
         mappy = Acp.extractPicturesVectors("../BDD/cropped&gray/learn");
-
         System.out.printf("[*]\tExtraction time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
         
         //print all ImageVectors from Learn
         printAll(mappy);
 
+        eigenMatrix M = Acp.getEigenMatrix(10, mappy);
+        
         startTime = System.currentTimeMillis();
         
         //get average face
@@ -44,19 +46,19 @@ public class Main {
         //these photos are exactly the same as random ones in Learn
         //the comparison should always be able to find the exact photo
         HashMap<String, ArrayList<ImageVector>> shouldBeYes;
-        shouldBeYes = Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn");
+        shouldBeYes = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn"));
         
         //these photos are of people not present in Learn
         //the comparison should always say no, the person isn't in Learn
         HashMap<String, ArrayList<ImageVector>> shouldBeNo;
-        shouldBeNo = Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn");
+        shouldBeNo = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn"));
         
         //these are previously unseen photos of people in Learn - the person is present in Learn but the exact photo isn't
         //this is the trickiest one to get right
         //this will show us if the program can recognise the same person from new photos
         HashMap<String, ArrayList<ImageVector>> shouldBeMaybe;
-        shouldBeMaybe = Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn");
-        
+        shouldBeMaybe = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
+        mappy = Acp.projectImages(M, mappy);
         // works perfectly
         successrate1 = data.Comparison.testDifferentBDDS(shouldBeYes, mappy, epsilon);
         //works perfectly
