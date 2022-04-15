@@ -8,6 +8,7 @@ public class eigenMatrix {
 	private Matrix A;
 	private Matrix transA;
 	private Matrix eigenVectors;
+	private Matrix projectionMatrix;
 	private double[] eigenValues;
 	
 	public eigenMatrix(Matrix A, int k) {
@@ -39,6 +40,13 @@ public class eigenMatrix {
 		
 		for( int i = 0; i < eigenValues.length; i++ ) System.out.println( eigenValues[i] );
 		
+		Matrix projector = A.times(pseudoVectors).inverse();
+		
+		this.projectionMatrix = new Matrix(k , projector.getColumnDimension());
+		
+		for (int i = 0; i < k; i++) {
+			this.projectionMatrix.setMatrix(i, i, 0, projector.getColumnDimension() - 1, projector.getMatrix(projector.getRowDimension() - 1 - i, projector.getRowDimension() - 1 - i, 0, projector.getColumnDimension() - 1));
+		}
 	}
 	
 	public Matrix getA() {
@@ -47,6 +55,10 @@ public class eigenMatrix {
 	
 	public double[] getEigenValues() {
 		return this.eigenValues;
+	}
+	
+	public Matrix getProjecitonMatrix() {
+		return this.projectionMatrix;
 	}
 	
 	

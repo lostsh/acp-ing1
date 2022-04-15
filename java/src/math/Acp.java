@@ -146,12 +146,13 @@ public class Acp {
     // Pour tester
     public static void main(String[] args) {
     	HashMap<String, ArrayList<ImageVector>> mappy;
-        mappy = extractPicturesVectors("../BDD/cropped&gray/testJava");
+        mappy = extractPicturesVectors("../BDD/cropped&gray/testJavaResized");
         
         mappy = normalizeVector(mappy);
         
         Matrix transA = createMatrixTrans(mappy);
         eigenMatrix M = new eigenMatrix( transA.transpose(), 10 );
+        M.getProjecitonMatrix().print(0, 5);
         System.out.println("Done");
     }
     
