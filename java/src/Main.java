@@ -18,8 +18,6 @@ public class Main {
         
         //print all ImageVectors from Learn
         printAll(mappy);
-
-        eigenMatrix M = Acp.getEigenMatrix(10, mappy);
         
         startTime = System.currentTimeMillis();
         
@@ -42,7 +40,7 @@ public class Main {
         
         //change the method call in Comparison.compare to switch distance methods
         //for Euclidean distance
-        double epsilon = 10000; 
+        double epsilon = 100; 
         
         //for Manhattan distance
         //double epsilon = 2500000; 
@@ -52,19 +50,18 @@ public class Main {
         //these photos are exactly the same as random ones in Learn
         //the comparison should always be able to find the exact photo
         HashMap<String, ArrayList<ImageVector>> shouldBeYes;
-        shouldBeYes = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn"));
+        shouldBeYes = Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn");
         
         //these photos are of people not present in Learn
         //the comparison should always say no, the person isn't in Learn
         HashMap<String, ArrayList<ImageVector>> shouldBeNo;
-        shouldBeNo = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn"));
+        shouldBeNo = Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn");
         
         //these are previously unseen photos of people in Learn - the person is present in Learn but the exact photo isn't
         //this is the trickiest one to get right
         //this will show us if the program can recognise the same person from new photos
         HashMap<String, ArrayList<ImageVector>> shouldBeMaybe;
-        shouldBeMaybe = Acp.projectImages(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
-        mappy = Acp.projectImages(M, mappy);
+        shouldBeMaybe = Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn");
         // works perfectly
         successrate1 = data.Comparison.testDifferentBDDS(shouldBeYes, mappy, epsilon);
         //works perfectly
@@ -75,6 +72,10 @@ public class Main {
         System.out.println("Success rate for photosinLearn : " + successrate1*100 + "%");
         System.out.println("Success rate for peoplenotinLearn : " + successrate2*100 + "%");
         System.out.println("Success rate for newphotosofpeopleinLearn : " + successrate3*100 + "%");
+        
+        eigenMatrix M = Acp.getEigenMatrix(10, mappy);
+        System.out.println("EigenFaces : ");
+        M.getEigenVectors().print(0, 5);
         
         System.out.println("[+]\t Done");
     }

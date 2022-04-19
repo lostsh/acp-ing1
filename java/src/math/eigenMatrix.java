@@ -52,6 +52,10 @@ public class eigenMatrix {
 		return this.A;
 	}
 	
+	public Matrix getEigenVectors() {
+		return this.eigenVectors;
+	}
+	
 	public double[] getEigenValues() {
 		return this.eigenValues;
 	}
