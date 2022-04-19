@@ -107,13 +107,29 @@ public class Acp {
         return  averageFace;
     }
     
+    public static HashMap<String, ArrayList<ImageVector>> realCopy(HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> newMap = new HashMap<String, ArrayList<ImageVector>>();
+    	ImageVector vector = new ImageVector();
+    	
+    	for( String key : map.keySet() ) {
+    		newMap.put(key, new ArrayList<>());
+    		for( int i = 0; i < map.get(key).size(); i++ ) {
+    			vector = map.get(key).get(i).clone();
+    			newMap.get(key).add(vector);
+    		}
+    	}
+    	return newMap;
+    }
+    
+    
     public static HashMap<String, ArrayList<ImageVector>> normalizeVector(HashMap<String, ArrayList<ImageVector>> map) {
-    	@SuppressWarnings("unchecked")
-		HashMap<String, ArrayList<ImageVector>> newMap = (HashMap<String, ArrayList<ImageVector>>)map.clone();
+		HashMap<String, ArrayList<ImageVector>> newMap = realCopy(map);
     	ImageVector avgVec = averageFace(map);
     	ImageVector res = new ImageVector();
     	
+    	
     	for( String key : map.keySet() ) {
+    		
     		for( int i = 0; i < map.get(key).size(); i++ ) {
     			res = map.get(key).get(i).addSoustract(avgVec, true);
     			newMap.get(key).set(i, res);

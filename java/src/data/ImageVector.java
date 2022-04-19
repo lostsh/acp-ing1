@@ -62,6 +62,15 @@ public class ImageVector {
     	return mat;
     }
     
+    @Override
+    public ImageVector clone() {
+    	ImageVector newVector = new ImageVector();
+    	for(  int i = 0; i < this.getDimension(); i++ ) {
+    		newVector.add(this.get(i));
+    	}
+    	return newVector;
+    }
+    
     public ImageVector addSoustract(ImageVector vec2, boolean soustract) {
     	ImageVector res = new ImageVector();
     	
