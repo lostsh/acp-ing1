@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Jama.Matrix;
-import Jama.EigenvalueDecomposition;
+
 
 public class Acp {
 
@@ -53,7 +53,7 @@ public class Acp {
     		ArrayList<ImageVector> vList = new ArrayList<ImageVector>();
     		for (ImageVector iv : ivList) {
     			ImageVector v = new ImageVector();
-    			Matrix pv = M.getProjecitonMatrix().times(iv.toMatrix());
+    			Matrix pv = M.getProjectionMatrix().times(iv.toMatrix());
     			for (int i = 0; i<pv.getRowDimension(); i++) {
     				v.add(pv.get(i, 0));
     			}
@@ -63,6 +63,24 @@ public class Acp {
     	}
         return vectors;
     }
+    
+    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+    	ImageVector avgVec = averageFace(map);
+    	ArrayList<Matrix> eigenVectorList = M.getEigenVectorsList();
+    	for (String ivName : map.keySet()) {
+    		ArrayList<ImageVector> ivList = map.get(ivName);
+    		vectors.put( ivName, new ArrayList<ImageVector>() );
+    		for (int g = 0; g < ivList.size(); g++ ) {
+    			vectors.get(ivName).add( new ImageVector() );
+    			for( int i = 0; i < eigenVectorList.size(); i++ ) {
+    				vectors.get(ivName).get(g).add( eigenVectorList.get(i).transpose().times( map.get(ivName).get(g).addSoustract(avgVec, true).toMatrix() ).get(0, 0) );
+    			}
+    		}
+    	}
+        return vectors;
+    }
+    
     
     public static eigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> mappy = normalizeVector(map);
@@ -91,7 +109,6 @@ public class Acp {
         // get total number of vectors into the map
         int numberOfVectors = 0;
         for( String key : mappy.keySet() ) numberOfVectors += mappy.get(key).size();
-        System.out.println("Total number of vectors : "+numberOfVectors );
 
         // Iterate over vectors to compute average face
         for (String s: mappy.keySet()) { // each person
@@ -109,13 +126,11 @@ public class Acp {
     
     public static HashMap<String, ArrayList<ImageVector>> realCopy(HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> newMap = new HashMap<String, ArrayList<ImageVector>>();
-    	ImageVector vector = new ImageVector();
     	
     	for( String key : map.keySet() ) {
     		newMap.put(key, new ArrayList<>());
     		for( int i = 0; i < map.get(key).size(); i++ ) {
-    			vector = map.get(key).get(i).clone();
-    			newMap.get(key).add(vector);
+    			newMap.get(key).add(map.get(key).get(i).clone());
     		}
     	}
     	return newMap;
@@ -126,7 +141,6 @@ public class Acp {
 		HashMap<String, ArrayList<ImageVector>> newMap = realCopy(map);
     	ImageVector avgVec = averageFace(map);
     	ImageVector res = new ImageVector();
-    	
     	
     	for( String key : map.keySet() ) {
     		
@@ -184,20 +198,88 @@ public class Acp {
     	return res;
     }
     
-    // Pour tester
+    // Tests with the new projection
     public static void main(String[] args) {
-    	HashMap<String, ArrayList<ImageVector>> mappy;
-        mappy = extractPicturesVectors("../BDD/cropped&gray/testJavaResized");
+        System.out.println("[+]\t Start extracting faces");
+        long startTime = System.currentTimeMillis();
         
-        mappy = normalizeVector(mappy);
+        //get images from Learn
+        HashMap<String, ArrayList<ImageVector>> mappy;
+        mappy = Acp.extractPicturesVectors("../BDD/cropped&gray/learn");
+        System.out.printf("[*]\tExtraction time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
         
-        Matrix transA = createMatrixTrans(mappy);
-        eigenMatrix M = new eigenMatrix( transA.transpose(), 10 );
-        M.getProjecitonMatrix().print(0, 5);
-        System.out.println("Done");
+        //print all ImageVectors from Learn
+        //printAll(mappy);
+        
+        eigenMatrix M = Acp.getEigenMatrix(20, mappy);
+        
+        //get average face
+        //ImageVector averageFace = math.Acp.averageFace(mappy);
+        //System.out.println("\t\t- "+averageFace.toString().substring(0, 45)+" [...])");
+        //System.out.printf("[*]\tAverage compute time : %ds\n", (System.currentTimeMillis() - startTime)/1000);
+
+        //TODO : for later: better to not use Image class there
+        // we may put Image processing func into it own class later
+        //save and display average face
+        
+        //Image i = getImage(averageFace, "../BDD/cropped&gray/average.jpg");
+        //i.show();
+        //i.save();
+        
+        
+        
+        /****/
+        /*this part tests the comparisons of photos using the class Comparison in package data*/
+        
+        //change the method call in Comparison.compare to switch distance methods
+        //for Euclidean distance
+        double epsilon = 0.0000001; 
+        
+        //for Manhattan distance
+        //double epsilon = 2500000; 
+        
+        double successrate1, successrate2, successrate3;
+        
+        //these photos are exactly the same as random ones in Learn
+        //the comparison should always be able to find the exact photo
+        HashMap<String, ArrayList<ImageVector>> shouldBeYes;
+        shouldBeYes = Acp.projectImagesAlternativ(M, Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn"));
+        // shouldBeYes = Acp.extractPicturesVectors("../BDD/cropped&gray/test/photosinLearn");
+        
+        //these photos are of people not present in Learn
+        //the comparison should always say no, the person isn't in Learn
+        HashMap<String, ArrayList<ImageVector>> shouldBeNo;
+        shouldBeNo = Acp.projectImagesAlternativ(M,Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn"));
+        // shouldBeNo = Acp.extractPicturesVectors("../BDD/cropped&gray/test/peoplenotinLearn");
+        
+        //these are previously unseen photos of people in Learn - the person is present in Learn but the exact photo isn't
+        //this is the trickiest one to get right
+        //this will show us if the program can recognise the same person from new photos
+        HashMap<String, ArrayList<ImageVector>> shouldBeMaybe;
+        shouldBeMaybe = Acp.projectImagesAlternativ(M,Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
+        // shouldBeMaybe = Acp.extractPicturesVectors("../BDD/cropped&gray/test/newphotosofpeopleinLearn");
+        
+        
+        mappy = Acp.projectImagesAlternativ(M, mappy);
+        // works perfectly
+        successrate1 = data.Comparison.testDifferentBDDS(shouldBeYes, mappy, epsilon);
+        //works perfectly
+        successrate2 = data.Comparison.testDifferentBDDS(shouldBeNo, mappy, epsilon);
+        //actually works OK with epsilon=10000
+        successrate3 = data.Comparison.testDifferentBDDS(shouldBeMaybe, mappy, epsilon);
+        
+        //System.out.println("mappy: ");
+        //Main.printAll(shouldBeYes);
+        
+        System.out.println("Success rate for photosinLearn : " + successrate1*100 + "%");
+        System.out.println("Success rate for peoplenotinLearn : " + successrate2*100 + "%");
+        System.out.println("Success rate for newphotosofpeopleinLearn : " + successrate3*100 + "%");
+        
+        //System.out.println("EigenFaces : ");
+        //M.getEigenVectors().print(0, 5);
+        //M.getProjectionMatrix().print(0, 5);
+        System.out.println("[+]\t Done");
     }
-    
-    
     
 }
 

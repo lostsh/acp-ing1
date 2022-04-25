@@ -1,6 +1,10 @@
 package math;
 
 import Jama.Matrix;
+import data.ImageVector;
+
+import java.util.ArrayList;
+
 import Jama.EigenvalueDecomposition;
 
 public class eigenMatrix {
@@ -10,6 +14,10 @@ public class eigenMatrix {
 	private Matrix eigenVectors;
 	private Matrix projectionMatrix;
 	private double[] eigenValues;
+	
+	/*
+	 * Create the eigenValue matrix, eigenVector matrix and projection matrix, while keeping only the k most important vectors and values only
+	 */
 	
 	public eigenMatrix(Matrix A, int k) {
 		this.A = A;
@@ -48,19 +56,51 @@ public class eigenMatrix {
 		}
 	}
 	
+	/*
+	 * Give the A matrix that we gave in its trans form
+	 * @return matrix 
+	 */
+	
 	public Matrix getA() {
 		return this.A;
 	}
+	
+	/*
+	 * Give the k most important eigenVectors in a matrix
+	 * @return matrix 
+	 */
 	
 	public Matrix getEigenVectors() {
 		return this.eigenVectors;
 	}
 	
+	public ArrayList<Matrix> getEigenVectorsList(){
+		ArrayList<Matrix> vectorList = new ArrayList<Matrix>();
+		for( int i = 0; i < eigenVectors.getColumnDimension(); i++ ) {
+			vectorList.add( new Matrix(eigenVectors.getRowDimension(), 1) );
+			
+			for(  int j = 0; j < eigenVectors.getRowDimension(); j++) {
+				vectorList.get(i).set(j, 0, eigenVectors.get(j, i) );
+			}
+		}
+		return vectorList;
+	}
+	
+	/*
+	 * Give the list of k eigenValues associated to the vectors in the good order
+	 * @return double[]
+	 */
+	
 	public double[] getEigenValues() {
 		return this.eigenValues;
 	}
 	
-	public Matrix getProjecitonMatrix() {
+	/*
+	 * Give the projection matrix
+	 * @return matrix 
+	 */
+	
+	public Matrix getProjectionMatrix() {
 		return this.projectionMatrix;
 	}
 	

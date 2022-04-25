@@ -19,7 +19,7 @@ public class Main {
         //print all ImageVectors from Learn
         printAll(mappy);
         
-        eigenMatrix M = Acp.getEigenMatrix(4, mappy);
+        eigenMatrix M = Acp.getEigenMatrix(10, mappy);
         startTime = System.currentTimeMillis();
         
         //get average face
@@ -30,9 +30,10 @@ public class Main {
         //TODO : for later: better to not use Image class there
         // we may put Image processing func into it own class later
         //save and display average face
-        Image i = getImage(averageFace, "../BDD/cropped&gray/average.jpg");
-        i.show();
-        i.save();
+        
+        //Image i = getImage(averageFace, "../BDD/cropped&gray/average.jpg");
+        //i.show();
+        //i.save();
         
         
         
@@ -71,8 +72,8 @@ public class Main {
         //actually works OK with epsilon=10000
         successrate3 = data.Comparison.testDifferentBDDS(shouldBeMaybe, mappy, epsilon);
         
-        System.out.println("mappy: ");
-        Main.printAll(shouldBeYes);
+        //System.out.println("mappy: ");
+        //Main.printAll(shouldBeYes);
         
         System.out.println("Success rate for photosinLearn : " + successrate1*100 + "%");
         System.out.println("Success rate for peoplenotinLearn : " + successrate2*100 + "%");
@@ -80,7 +81,7 @@ public class Main {
         
         //System.out.println("EigenFaces : ");
         //M.getEigenVectors().print(0, 5);
-        M.getProjecitonMatrix().print(0, 5);
+        //M.getProjectionMatrix().print(0, 5);
         System.out.println("[+]\t Done");
     }
 

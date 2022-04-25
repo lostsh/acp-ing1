@@ -18,7 +18,7 @@ public class Comparison {
         	num = 1;
         	//iterate through all images for that person
             for (ImageVector v : mappy.get(s)) {
-            	System.out.println("Person with ID number " + s + ", image number " + num + " is getting tested");
+            	//System.out.println("Person with ID number " + s + ", image number " + num + " is getting tested");
             	System.out.println(compare(v, mappy, epsilon));
             	num++;
             }
@@ -37,7 +37,6 @@ public class Comparison {
     //THIS ONE TESTS EVERYTHING IN ONE BDD AGAINST ANOTHER BDD (Learn)
     //RETURNS SUCCESS RATE
     public static double testDifferentBDDS(HashMap<String, ArrayList<ImageVector>> test, HashMap<String, ArrayList<ImageVector>> learn, double epsilon){
-        String output = new String("");
         int id;
         
         double wrong = 0;
@@ -47,9 +46,8 @@ public class Comparison {
     	for (String s : test.keySet()) {
         	//iterate through all images for that person
             for (ImageVector v : test.get(s)) {
-            	System.out.println("Person with ID number " + s + " is getting tested");
+            	//System.out.println("Person with ID number " + s + " is getting tested");
             	id=compare(v, learn, epsilon);
-            	System.out.println(output);
             	
             	//assuming that ID numbers for people not in learn will be greater than the max ID number for people in Learn
             	//e.g. if there are 20 people in Learn, then they will have IDs between 1 and 20, 
@@ -77,7 +75,6 @@ public class Comparison {
     
     /**
      * Compares an ImageVector with all ImageVectors in Learn.
-     * Can be used for final comparison once the ACP part is ready
      * Returns the person's ID if found, -1 if not found
      * Test with different values of epsilon
      * @param test ImageVector of the image to compare.
@@ -112,7 +109,7 @@ public class Comparison {
         	id = calculateMode(mode);
         	res += "\tMATCH FOUND: person with ID number " + id + "\n";
         }
-        System.out.println(res);
+        //System.out.println(res);
         return id;
     }
     
