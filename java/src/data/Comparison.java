@@ -18,7 +18,7 @@ public class Comparison {
         	num = 1;
         	//iterate through all images for that person
             for (ImageVector v : mappy.get(s)) {
-            	//System.out.println("Person with ID number " + s + ", image number " + num + " is getting tested");
+            	System.out.println("Person with ID number " + s + ", image number " + num + " is getting tested");
             	System.out.println(compare(v, mappy, epsilon));
             	num++;
             }
@@ -109,7 +109,7 @@ public class Comparison {
         	id = calculateMode(mode);
         	res += "\tMATCH FOUND: person with ID number " + id + "\n";
         }
-        //System.out.println(res);
+        System.out.println(res);
         return id;
     }
     
