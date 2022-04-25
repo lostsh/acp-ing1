@@ -42,10 +42,28 @@ public class Main {
         
         //change the method call in Comparison.compare to switch distance methods
         //for Euclidean distance
-        double epsilon = 100; 
+        //0.175 gives 62,0,43
+        //0.15 gives 83,0,56
+        //0.125 gives 91,14,62
+        //0.11 gives 95, 50,75
+        //0.1054 gives 95,57,75***peak
+        //0.105 gives 91,57,75
+        //0.1 gives 91,57,68
+        //0.09 gives 100,64,56
+        //0.075 gives 100,85,43
+        //0.05 gives 100,100,37
+        double epsilon = 0.1054; 
         
         //for Manhattan distance
-        //double epsilon = 2500000; 
+        //0.31 gives 87,7,68
+        //0.3 gives 87,14,75
+        //0.275 gives 87,35,75
+        //0.25 gives 95,50,75***peak
+        //0.245 gives 95,50,75
+        //0.24 gives 91,57,68
+        //0.225 gives 95,64,62
+        //0.2 gives 95,85,43
+        //0.1054 gives 100,100,31
         
         double successrate1, successrate2, successrate3;
         
