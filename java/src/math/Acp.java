@@ -233,7 +233,14 @@ public class Acp {
         
         //change the method call in Comparison.compare to switch distance methods
         //for Euclidean distance
-        double epsilon = 0.0000001; 
+        //8000000 gives 29,0,12
+        //7000000 gives 41,0,25
+        //6000000 gives 50,0,31
+        //5000000 gives 54,7,25
+        //4000000 gives 83,28,18
+        //3000000 gives 95,78,0
+        //2000000 gives 100,100,0
+        double epsilon = 2000000; 
         
         //for Manhattan distance
         //double epsilon = 2500000; 
