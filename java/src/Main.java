@@ -19,7 +19,17 @@ public class Main {
         //print all ImageVectors from Learn
         printAll(mappy);
         
-        eigenMatrix M = Acp.getEigenMatrix(10, mappy);
+        //with epsilon=0.1054, k=50 gives 100,100,6
+        //with epsilon=0.1054, k=40 gives 100,100,18
+        //with epsilon=0.1054, k=30 gives 100,100,18
+        //with epsilon=0.1054, k=20 gives 100,100,25
+        //with epsilon=0.1054, k=15 gives 100,92,43
+        //with epsilon=0.1054, k=12 gives 91,64,56
+        //with epsilon=0.1054, k=11 gives 95,57,75
+        //with epsilon=0.1054, k=10 gives 95,57,75
+        //with epsilon=0.1054, k=9 gives 91,14,62
+        //with epsilon=0.1054, k=5 gives 50,0,31
+        eigenMatrix M = Acp.getEigenMatrix(40, mappy);
         startTime = System.currentTimeMillis();
         
         //get average face
@@ -42,23 +52,44 @@ public class Main {
         
         //change the method call in Comparison.compare to switch distance methods
         //for Euclidean distance
+        //with k=7
+        //0.1 gives 83,0,56
+        //0.05 gives 100,71,31
+        
+        //with k=10
         //0.175 gives 62,0,43
         //0.15 gives 83,0,56
         //0.125 gives 91,14,62
         //0.11 gives 95, 50,75
-        //0.1054 gives 95,57,75***peak
+        //0.1054 gives 95,57,75***
         //0.105 gives 91,57,75
         //0.1 gives 91,57,68
         //0.09 gives 100,64,56
         //0.075 gives 100,85,43
         //0.05 gives 100,100,37
-        double epsilon = 0.1054; 
+        
+        //with k=30
+        //0.28 gives 91,28,75
+        //0.25 gives 100,42,68
+        //0.2 gives 100,85,62
+        //0.15 gives 100,100,37
+        
+        //with k=40
+        //0.5 gives 87,21,75
+        //0.4 gives 100,50,75
+        //0.35 100,64,68
+        //0.32 gives 100,64,81
+        //0.31 gives 95,71,81**peak
+        //0.302 gives 95,71,75
+        //0.3 gives 100,78,68
+        //0.2 gives 100,100,37
+        double epsilon = 0.31; 
         
         //for Manhattan distance
         //0.31 gives 87,7,68
         //0.3 gives 87,14,75
         //0.275 gives 87,35,75
-        //0.25 gives 95,50,75***peak
+        //0.25 gives 95,50,75***
         //0.245 gives 95,50,75
         //0.24 gives 91,57,68
         //0.225 gives 95,64,62
