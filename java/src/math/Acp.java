@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Jama.Matrix;
-import Jama.EigenvalueDecomposition;
+
 
 public class Acp {
 
@@ -45,6 +45,49 @@ public class Acp {
         if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" files.");
         return vectors;
     }
+    
+    public static HashMap<String, ArrayList<ImageVector>> projectImages(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+    	for (String ivName : map.keySet()) {
+    		ArrayList<ImageVector> ivList = map.get(ivName);
+    		ArrayList<ImageVector> vList = new ArrayList<ImageVector>();
+    		for (ImageVector iv : ivList) {
+    			ImageVector v = new ImageVector();
+    			Matrix pv = M.getProjectionMatrix().times(iv.toMatrix());
+    			for (int i = 0; i<pv.getRowDimension(); i++) {
+    				v.add(pv.get(i, 0));
+    			}
+    			vList.add(v);
+    		}
+    		vectors.put(ivName, vList);
+    	}
+        return vectors;
+    }
+    
+    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+    	ImageVector avgVec = averageFace(map);
+    	ArrayList<Matrix> eigenVectorList = M.getEigenVectorsList();
+    	for (String ivName : map.keySet()) {
+    		ArrayList<ImageVector> ivList = map.get(ivName);
+    		vectors.put( ivName, new ArrayList<ImageVector>() );
+    		for (int g = 0; g < ivList.size(); g++ ) {
+    			vectors.get(ivName).add( new ImageVector() );
+    			for( int i = 0; i < eigenVectorList.size(); i++ ) {
+    				vectors.get(ivName).get(g).add( eigenVectorList.get(i).transpose().times( map.get(ivName).get(g).addSoustract(avgVec, true).toMatrix() ).get(0, 0) );
+    			}
+    		}
+    	}
+        return vectors;
+    }
+    
+    
+    public static eigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> mappy = normalizeVector(map);
+    	Matrix transA = createMatrixTrans(mappy);
+        return (new eigenMatrix( transA.transpose(), k ));
+    	
+    }
 
     public static boolean isImage(String file){
         return file.contains(".png") || file.contains(".jpg") || file.contains(".PNG") || file.contains(".JPG")
@@ -66,7 +109,6 @@ public class Acp {
         // get total number of vectors into the map
         int numberOfVectors = 0;
         for( String key : mappy.keySet() ) numberOfVectors += mappy.get(key).size();
-        System.out.println("Total number of vectors : "+numberOfVectors );
 
         // Iterate over vectors to compute average face
         for (String s: mappy.keySet()) { // each person
@@ -82,13 +124,26 @@ public class Acp {
         return  averageFace;
     }
     
+    public static HashMap<String, ArrayList<ImageVector>> realCopy(HashMap<String, ArrayList<ImageVector>> map) {
+    	HashMap<String, ArrayList<ImageVector>> newMap = new HashMap<String, ArrayList<ImageVector>>();
+    	
+    	for( String key : map.keySet() ) {
+    		newMap.put(key, new ArrayList<>());
+    		for( int i = 0; i < map.get(key).size(); i++ ) {
+    			newMap.get(key).add(map.get(key).get(i).clone());
+    		}
+    	}
+    	return newMap;
+    }
+    
+    
     public static HashMap<String, ArrayList<ImageVector>> normalizeVector(HashMap<String, ArrayList<ImageVector>> map) {
-    	@SuppressWarnings("unchecked")
-		HashMap<String, ArrayList<ImageVector>> newMap = (HashMap<String, ArrayList<ImageVector>>)map.clone();
+		HashMap<String, ArrayList<ImageVector>> newMap = realCopy(map);
     	ImageVector avgVec = averageFace(map);
     	ImageVector res = new ImageVector();
     	
     	for( String key : map.keySet() ) {
+    		
     		for( int i = 0; i < map.get(key).size(); i++ ) {
     			res = map.get(key).get(i).addSoustract(avgVec, true);
     			newMap.get(key).set(i, res);
@@ -123,14 +178,6 @@ public class Acp {
     	return mat;
     }
     
-    public static EigenvalueDecomposition eigenDecompo( Matrix transMat ) {
-    	Matrix mat = transMat.transpose();
-    	Matrix smallMatrix = prodPerso(transMat, mat );
-    	EigenvalueDecomposition Structure = smallMatrix.eig();
-    	
-    	return Structure;
-    }
-    
     public static Matrix prodPerso( Matrix mat1, Matrix mat2 ) {
     	int nbLigne1 = mat1.getRowDimension();
     	int nbLigne2= mat2.getRowDimension();
@@ -150,46 +197,6 @@ public class Acp {
     	
     	return res;
     }
-    
-    public static void test1(Matrix transMat) {
-    	Matrix mat = transMat.transpose();
-    	Matrix L = prodPerso(transMat, mat);
-    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
-        Matrix V = Structure.getV();
-        
-    	Matrix vector1 = V.getMatrix(0, V.getRowDimension() - 1, 1, 1);
-    	Matrix res = prodPerso(L, vector1);
-    	
-    	vector1.print(0, 0);
-    	res.print(0, 0);
-    	L.print(0, 0);
-    	}
-    
-    public static void test2(Matrix transMat) {
-    	EigenvalueDecomposition Structure = eigenDecompo(transMat);
-        Matrix V = Structure.getV();
-        Matrix D = Structure.getD();
-        
-    	V.print(0, 0);
-    	D.print(0, 0);
-
-    	}
-    
-    
-    // Pour tester
-    public static void main(String[] args) {
-    	HashMap<String, ArrayList<ImageVector>> mappy;
-        mappy = extractPicturesVectors("../BDD/cropped&gray/testJava");
-        
-        mappy = normalizeVector(mappy);
-        
-        Matrix transMat = createMatrixTrans(mappy);
-        test1(transMat);
-        test2(transMat);
-        System.out.println("Done");
-    }
-    
-    
     
 }
 

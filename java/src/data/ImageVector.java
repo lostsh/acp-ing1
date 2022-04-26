@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
+import Jama.Matrix;
+
 /**
  * Contain vectorized image.
  * Bean to be used everywhere we need to manipulate the image.
@@ -48,6 +50,27 @@ public class ImageVector {
         return vector.set(index, val);
     }
     
+    public Matrix toMatrix() {
+    	int taille = this.getDimension();
+    	Matrix mat = new Matrix( taille, 1);
+    	
+    	for( int i = 0; i < taille; i++ ) {
+    		
+    		mat.set(i, 0, this.get(i));
+    	}
+    	
+    	return mat;
+    }
+    
+    @Override
+    public ImageVector clone() {
+    	ImageVector newVector = new ImageVector();
+    	for(  int i = 0; i < this.getDimension(); i++ ) {
+    		newVector.add(this.get(i));
+    	}
+    	return newVector;
+    }
+    
     public ImageVector addSoustract(ImageVector vec2, boolean soustract) {
     	ImageVector res = new ImageVector();
     	
@@ -74,17 +97,31 @@ public class ImageVector {
     }
 
     /**
-     * Compare two ImageVector and return the distance between.
+     * Compare two ImageVector and return the Euclidean distance between.
      *
      * @return distance between two ImageVector.
      */
-    public double compare(ImageVector iv) {
+    public double distanceEuclidean(ImageVector iv) {
         int size = min(this.getDimension(), iv.getDimension());
         double sum = 0;
         for (int i = 0; i < size; i++) {
             sum += pow((this.get(i) - iv.get(i)), 2);
         }
         return sqrt(sum);
+    }
+    
+    /**
+     * Compare two ImageVector and return the Manhattan distance between.
+     *
+     * @return distance between two ImageVector.
+     */
+    public double distanceManhattan(ImageVector iv) {
+        int size = min(this.getDimension(), iv.getDimension());
+        double sum = 0;
+        for (int i = 0; i < size; i++) {
+            sum += abs(this.get(i) - iv.get(i));
+        }
+        return (sum);
     }
 
     /**
