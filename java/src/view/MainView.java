@@ -22,7 +22,11 @@ public class MainView extends Application {
 
     Stage primaryStage;
 
-    ImageView averageImage = new ImageView();
+    ImageView averageImage = null;
+
+    Label statusIndicator = null;
+
+    Label recognitionRate = null;
 
     CustomDirectoryChooser learningDirectoryChooser;
 
@@ -37,6 +41,8 @@ public class MainView extends Application {
         this.primaryStage = primaryStage;
         learningDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Learning directory");
         testingDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Testing directory");
+        averageImage = new ImageView();
+        // layouts
         BorderPane root = new BorderPane();
         root.setTop(createTop());
         root.setCenter(createCenter());
@@ -94,7 +100,16 @@ public class MainView extends Application {
         leftContainer.setAlignment(Pos.CENTER_LEFT);
         VBox v = new VBox(30);
         HBox h = new HBox(100);
-        h.getChildren().addAll(new Button("Learn"), new Label("Status : Standby"));
+        statusIndicator = new Label("Status : Standby");
+        Button learnLauncher = new Button("Learn");
+        learnLauncher.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(MainView.this.learningDirectoryChooser.isValid())
+                    MainView.this.statusIndicator.setText("Status : Learn");
+            }
+        });
+        h.getChildren().addAll(learnLauncher, statusIndicator);
         h.setAlignment(Pos.BOTTOM_LEFT);
         v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser, h);
 
@@ -111,10 +126,18 @@ public class MainView extends Application {
         btm.setPadding(new Insets(5));
         VBox vb = new VBox(30);
         HBox hb = new HBox(100);
-        hb.getChildren().addAll(new Button("Run"), new Label("Recognition rate : ?%"));
+        recognitionRate = new Label("Recognition rate : ?%");
+        Button testingLauncher = new Button("Run");
+        testingLauncher.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (MainView.this.testingDirectoryChooser.isValid())
+                    MainView.this.recognitionRate.setText("Recognition rate : any%");
+            }
+        });
+        hb.getChildren().addAll(testingLauncher, recognitionRate);
         hb.setAlignment(Pos.BOTTOM_LEFT);
         vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser, hb);
-        //btm.getChildren().add(createPane(700, 200));
         btm.getChildren().add(vb);
 
         p.getChildren().addAll(top, btm);
