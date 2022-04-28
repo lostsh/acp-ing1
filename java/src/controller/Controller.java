@@ -30,15 +30,17 @@ public class Controller {
         matrix = Acp.getEigenMatrix(40, mappy);
     }
 
-    public void saveAverageFace(String savePath){
+    public boolean saveAverageFace(String savePath){
         if(mappy != null){
             ImageVector averageFace = Acp.averageFace(mappy);
             getImage(averageFace, savePath).save();
+            return true;
         }
+        return false;
     }
 
-    public void saveAverageFace() {
-        saveAverageFace("../BDD/cropped&gray/average.jpg");
+    public boolean saveAverageFace() {
+        return saveAverageFace("../BDD/cropped&gray/average.jpg");
     }
 
     public void extractTest(File directory){

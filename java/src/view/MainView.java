@@ -106,7 +106,7 @@ public class MainView extends Application {
         leftContainer.setAlignment(Pos.CENTER_LEFT);
         VBox v = new VBox(30);
         HBox h = new HBox(100);
-        statusIndicator = new Label("Status : standby");
+        statusIndicator = new Label("Status : Standby");
         Button learnLauncher = new Button("Learn");
         learnLauncher.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -115,8 +115,9 @@ public class MainView extends Application {
                     //TODO: think where to put indication on compute operations
                     //maybe threading
                     MainView.this.statusIndicator.setText("Status : Learning");
-                    MainView.this.controller.saveAverageFace();
-                    MainView.this.statusIndicator.setText("Status : Learned");
+                    boolean status = MainView.this.controller.saveAverageFace();
+                    averageImage.setImage(new Image(new File("../BDD/cropped&gray/average.jpg").toURI().toString()));
+                    MainView.this.statusIndicator.setText("Status : "+(status?"Learned":"Failed"));
                 }
             }
         });
@@ -142,8 +143,12 @@ public class MainView extends Application {
         testingLauncher.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (MainView.this.testingDirectoryChooser.isValid())
+                if (MainView.this.testingDirectoryChooser.isValid()){
                     MainView.this.recognitionRate.setText("Recognition rate : any%");
+                    MainView.this.controller.compareDistances();
+                    MainView.this.recognitionRate.setText("Recognition rate : "+
+                            MainView.this.controller.getSuccessRate() +"%");
+                }
             }
         });
         hb.getChildren().addAll(testingLauncher, recognitionRate);
@@ -173,12 +178,16 @@ public class MainView extends Application {
     /* Effective application logic */
 
     private void learningUpdated(){
-        statusIndicator.setText("Status : standby");
+        statusIndicator.setText("Status : Standby");
         if(learningDirectoryChooser.isValid()){
             learningFiles.setItems(FXCollections.observableArrayList(
                     learningDirectoryChooser.getDirectory().listFiles()
             ));
             //TODO: think where to put the extraction to avoid await when select dir
+            //TODO: real thread usage : check synchronisation and update components
+            new Thread(() -> {
+                controller.extractLearn(learningDirectoryChooser.getDirectory());
+            }).start();
             //controller.extractLearn(learningDirectoryChooser.getDirectory());
         }
     }
@@ -189,6 +198,10 @@ public class MainView extends Application {
             testingFiles.setItems(FXCollections.observableArrayList(
                     testingDirectoryChooser.getDirectory().listFiles()
             ));
+            //TODO: real thread usage : check synchronisation and update components
+            new Thread(() -> {
+                controller.extractTest(testingDirectoryChooser.getDirectory());
+            }).start();
         }
     }
 }
