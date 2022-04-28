@@ -1,3 +1,5 @@
+package controller;
+
 import data.Comparison;
 import data.Image;
 import data.ImageVector;

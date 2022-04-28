@@ -2,10 +2,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import data.Image;
+import controller.Controller;
 import data.ImageVector;
-import math.Acp;
-import math.EigenMatrix;
 
 public class Main {
     public static void main(String[] args) {

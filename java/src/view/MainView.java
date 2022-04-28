@@ -1,6 +1,7 @@
 package view;
 
-import data.ImageVector;
+import controller.Controller;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -15,8 +16,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MainView extends Application {
 
@@ -34,6 +33,8 @@ public class MainView extends Application {
     CustomDirectoryChooser testingDirectoryChooser;
     ListView<File> testingFiles;
 
+    Controller controller = null;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -45,6 +46,7 @@ public class MainView extends Application {
         learningDirectoryChooser.addObserver((o, arg) -> learningUpdated());
         testingDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Testing directory");
         testingDirectoryChooser.addObserver((o, arg) -> testingUpdated());
+        controller = new Controller();
         averageImage = new ImageView();
         // layouts
         BorderPane root = new BorderPane();
@@ -109,8 +111,13 @@ public class MainView extends Application {
         learnLauncher.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(MainView.this.learningDirectoryChooser.isValid())
-                    MainView.this.statusIndicator.setText("Status : Learn");
+                if(MainView.this.learningDirectoryChooser.isValid()){
+                    //TODO: think where to put indication on compute operations
+                    //maybe threading
+                    MainView.this.statusIndicator.setText("Status : Learning");
+                    MainView.this.controller.saveAverageFace();
+                    MainView.this.statusIndicator.setText("Status : Learned");
+                }
             }
         });
         h.getChildren().addAll(learnLauncher, statusIndicator);
@@ -171,6 +178,8 @@ public class MainView extends Application {
             learningFiles.setItems(FXCollections.observableArrayList(
                     learningDirectoryChooser.getDirectory().listFiles()
             ));
+            //TODO: think where to put the extraction to avoid await when select dir
+            //controller.extractLearn(learningDirectoryChooser.getDirectory());
         }
     }
 
