@@ -5,26 +5,35 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Observable;
 
-public class CustomDirectoryChooser extends HBox{
+public class CustomDirectoryChooser extends Observable {
 
     private TextField input = null;
 
     private File directory = null;
 
+    Button button = null;
+
     public CustomDirectoryChooser(Stage s, String placeholder) {
         input = new TextField();
+        button = new Button("\uD83D\uDDC1 Browse");
         input.setPromptText(placeholder);
         input.setDisable(true);
         input.setPrefWidth(300);
-        Button button = new Button("\uD83D\uDDC1 Browse");
         button.setOnAction(new BrowseHandler(s));
-        this.getChildren().addAll(input, button);
-        this.setSpacing(5);
+    }
+
+    public Pane getPane(){
+        HBox p = new HBox();
+        p.getChildren().addAll(input, button);
+        p.setSpacing(5);
+        return p;
     }
 
     public boolean isValid(){
@@ -49,7 +58,8 @@ public class CustomDirectoryChooser extends HBox{
             CustomDirectoryChooser.this.directory = chooser.showDialog(this.stage);
             CustomDirectoryChooser.this.input.
                     setText(CustomDirectoryChooser.this.directory.toString());
-            //while (CustomDirectoryChooser.this.directory == null)
+            CustomDirectoryChooser.this.setChanged();
+            CustomDirectoryChooser.this.notifyObservers();
         }
     }
 }

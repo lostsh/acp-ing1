@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -29,8 +28,10 @@ public class MainView extends Application {
     Label recognitionRate = null;
 
     CustomDirectoryChooser learningDirectoryChooser;
+    ListView<File> learningFiles;
 
     CustomDirectoryChooser testingDirectoryChooser;
+    ListView<File> testingFiles;
 
     public static void main(String[] args) {
         launch(args);
@@ -40,7 +41,9 @@ public class MainView extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         learningDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Learning directory");
+        learningDirectoryChooser.addObserver((o, arg) -> learningUpdated());
         testingDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Testing directory");
+        testingDirectoryChooser.addObserver((o, arg) -> testingUpdated());
         averageImage = new ImageView();
         // layouts
         BorderPane root = new BorderPane();
@@ -100,7 +103,7 @@ public class MainView extends Application {
         leftContainer.setAlignment(Pos.CENTER_LEFT);
         VBox v = new VBox(30);
         HBox h = new HBox(100);
-        statusIndicator = new Label("Status : Standby");
+        statusIndicator = new Label("Status : standby");
         Button learnLauncher = new Button("Learn");
         learnLauncher.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -111,7 +114,7 @@ public class MainView extends Application {
         });
         h.getChildren().addAll(learnLauncher, statusIndicator);
         h.setAlignment(Pos.BOTTOM_LEFT);
-        v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser, h);
+        v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser.getPane(), h);
 
         leftContainer.getChildren().add(v);
 
@@ -137,7 +140,7 @@ public class MainView extends Application {
         });
         hb.getChildren().addAll(testingLauncher, recognitionRate);
         hb.setAlignment(Pos.BOTTOM_LEFT);
-        vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser, hb);
+        vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser.getPane(), hb);
         btm.getChildren().add(vb);
 
         p.getChildren().addAll(top, btm);
@@ -146,19 +149,40 @@ public class MainView extends Application {
 
     private Pane createLeft(){
         VBox p = new VBox(5);
-        ListView<String> learningFiles = new ListView<>();
-        ObservableList<String> items = FXCollections.observableArrayList("One", "two", "tree");
-        learningFiles.setItems(items);
+        learningFiles = new ListView<>();
+        learningFiles.setFocusTraversable(false);
+        //ObservableList<File> items = FXCollections.observableArrayList(new File("../BDD/cropped&gray/learn").listFiles());
+        //learningFiles.setItems(items);
         learningFiles.setMaxSize(150, 200);
         learningFiles.setPrefSize(150, 200);
 
-        ListView<File> testingFiles = new ListView<>();
-        testingFiles.setItems(FXCollections.observableArrayList(Arrays.asList(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn").listFiles())));
+        testingFiles = new ListView<>();
+        //testingFiles.setItems(FXCollections.observableArrayList(Arrays.asList(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn").listFiles())));
         testingFiles.setMaxSize(150, 200);
         testingFiles.setPrefSize(150, 200);
         p.getChildren().addAll(learningFiles, testingFiles);
         p.setPadding(new Insets(0, 5, 5, 5));
         //p.setAlignment(Pos.BASELINE_CENTER);
         return p;
+    }
+
+    /* Effective application logic */
+
+    private void learningUpdated(){
+        statusIndicator.setText("Status : standby");
+        if(learningDirectoryChooser.isValid()){
+            learningFiles.setItems(FXCollections.observableArrayList(
+                    learningDirectoryChooser.getDirectory().listFiles()
+            ));
+        }
+    }
+
+    private void testingUpdated(){
+        recognitionRate.setText("Recognition rate : ?%");
+        if(testingDirectoryChooser.isValid()){
+            testingFiles.setItems(FXCollections.observableArrayList(
+                    testingDirectoryChooser.getDirectory().listFiles()
+            ));
+        }
     }
 }
