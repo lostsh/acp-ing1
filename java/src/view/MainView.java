@@ -3,24 +3,30 @@ package view;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.NodeOrientation;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainView extends Application {
 
+    Stage primaryStage;
+
     ImageView averageImage = new ImageView();
+
+    CustomDirectoryChooser learningDirectoryChooser;
+
+    CustomDirectoryChooser testingDirectoryChooser;
 
     public static void main(String[] args) {
         launch(args);
@@ -28,6 +34,9 @@ public class MainView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
+        learningDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Learning directory");
+        testingDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Testing directory");
         BorderPane root = new BorderPane();
         root.setTop(createTop());
         root.setCenter(createCenter());
@@ -41,32 +50,16 @@ public class MainView extends Application {
         primaryStage.show();
     }
 
-    private Pane createPane(int width, int height){
-        Pane p = new Pane();
-        p.setPrefWidth(width);
-        p.setPrefHeight(height);
-        p.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 2px;");
-        return p;
-    }
-
     private Pane createTop(){
         VBox p = new VBox();
         p.setPadding(new Insets(0, 0, 5, 0));
         MenuBar m = new MenuBar();
         Menu mm = new Menu("File");
-        mm.getItems().addAll(new MenuItem("Add picture"), new MenuItem("Exit"));
+        MenuItem exit = new MenuItem("Exit");
+        exit.setOnAction(event -> System.exit(0));
+        mm.getItems().addAll(new MenuItem("Add picture"), exit);
         m.getMenus().add(mm);
         p.getChildren().add(m);
-        return p;
-    }
-
-    private Pane createFileField(String placeholder){
-        HBox p = new HBox(5);
-        TextField input = new TextField();
-        input.setPromptText(placeholder);
-        input.setPrefWidth(275);
-        Button button = new Button("Browse");
-        p.getChildren().addAll(input, button);
         return p;
     }
 
@@ -88,22 +81,22 @@ public class MainView extends Application {
         averageImage.setFitWidth(188);
         averageImage.setFitHeight(188);
         Label l = new Label("Average image");
-        l.setStyle("-fx-rotate: -90;");
-        avgImContainer.setMaxWidth(340);
-        avgImContainer.setPrefWidth(340);
+        l.setStyle("-fx-rotate: -90; -fx-min-width: 100;");
+        avgImContainer.setMaxWidth(270);
+        avgImContainer.setPrefWidth(270);
         avgImContainer.getChildren().addAll(l, averageImage);
         avgImContainer.setAlignment(Pos.CENTER_RIGHT);
 
         // input layout
         HBox leftContainer = new HBox(5);
-        leftContainer.setMaxWidth(350);
-        leftContainer.setPrefWidth(350);
-        leftContainer.setAlignment(Pos.CENTER);
+        leftContainer.setMaxWidth(420);
+        leftContainer.setPrefWidth(420);
+        leftContainer.setAlignment(Pos.CENTER_LEFT);
         VBox v = new VBox(30);
         HBox h = new HBox(100);
         h.getChildren().addAll(new Button("Learn"), new Label("Status : Standby"));
         h.setAlignment(Pos.BOTTOM_LEFT);
-        v.getChildren().addAll(new Label("Learning files"), createFileField("Learning path"), h);
+        v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser, h);
 
         leftContainer.getChildren().add(v);
 
@@ -120,7 +113,7 @@ public class MainView extends Application {
         HBox hb = new HBox(100);
         hb.getChildren().addAll(new Button("Run"), new Label("Recognition rate : ?%"));
         hb.setAlignment(Pos.BOTTOM_LEFT);
-        vb.getChildren().addAll(new Label("Test files"), createFileField("Test path"), hb);
+        vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser, hb);
         //btm.getChildren().add(createPane(700, 200));
         btm.getChildren().add(vb);
 
