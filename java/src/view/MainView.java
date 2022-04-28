@@ -1,8 +1,8 @@
 package view;
 
+import data.ImageVector;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,7 +15,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainView extends Application {
 
@@ -151,18 +152,14 @@ public class MainView extends Application {
         VBox p = new VBox(5);
         learningFiles = new ListView<>();
         learningFiles.setFocusTraversable(false);
-        //ObservableList<File> items = FXCollections.observableArrayList(new File("../BDD/cropped&gray/learn").listFiles());
-        //learningFiles.setItems(items);
         learningFiles.setMaxSize(150, 200);
         learningFiles.setPrefSize(150, 200);
 
         testingFiles = new ListView<>();
-        //testingFiles.setItems(FXCollections.observableArrayList(Arrays.asList(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn").listFiles())));
         testingFiles.setMaxSize(150, 200);
         testingFiles.setPrefSize(150, 200);
         p.getChildren().addAll(learningFiles, testingFiles);
         p.setPadding(new Insets(0, 5, 5, 5));
-        //p.setAlignment(Pos.BASELINE_CENTER);
         return p;
     }
 

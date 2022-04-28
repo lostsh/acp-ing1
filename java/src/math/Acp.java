@@ -46,7 +46,7 @@ public class Acp {
         return vectors;
     }
     
-    public static HashMap<String, ArrayList<ImageVector>> projectImages(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    public static HashMap<String, ArrayList<ImageVector>> projectImages(EigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
     	for (String ivName : map.keySet()) {
     		ArrayList<ImageVector> ivList = map.get(ivName);
@@ -64,7 +64,7 @@ public class Acp {
         return vectors;
     }
     
-    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(EigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
     	ImageVector avgVec = averageFace(map);
     	ArrayList<Matrix> eigenVectorList = M.getEigenVectorsList();
@@ -82,10 +82,10 @@ public class Acp {
     }
     
     
-    public static eigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
+    public static EigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> mappy = normalizeVector(map);
     	Matrix transA = createMatrixTrans(mappy);
-        return (new eigenMatrix( transA.transpose(), k ));
+        return (new EigenMatrix( transA.transpose(), k ));
     	
     }
 

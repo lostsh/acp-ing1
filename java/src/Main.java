@@ -1,12 +1,22 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import data.Image;
 import data.ImageVector;
 import math.Acp;
-import math.eigenMatrix;
+import math.EigenMatrix;
 
 public class Main {
+    public static void main(String[] args) {
+        Controller c = new Controller();
+        c.extractLearn(new File("../BDD/cropped&gray/learn"));
+        c.saveAverageFace();
+        c.extractTest(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
+        c.compareDistances();
+        System.out.println(c.getSuccessRate());
+    }
+    /*
     public static void main(String[] args) {
         System.out.println("[+]\t Start extracting faces");
         long startTime = System.currentTimeMillis();
@@ -29,7 +39,7 @@ public class Main {
         //with epsilon=0.1054, k=10 gives 95,57,75
         //with epsilon=0.1054, k=9 gives 91,14,62
         //with epsilon=0.1054, k=5 gives 50,0,31
-        eigenMatrix M = Acp.getEigenMatrix(40, mappy);
+        EigenMatrix M = Acp.getEigenMatrix(40, mappy);
         startTime = System.currentTimeMillis();
         
         //get average face
@@ -47,8 +57,7 @@ public class Main {
         
         
         
-        /****/
-        /*this part tests the comparisons of photos using the class Comparison in package data*/
+        //this part tests the comparisons of photos using the class Comparison in package data
         
         //change the method call in Comparison.compare to switch distance methods
         //for Euclidean distance
@@ -132,7 +141,7 @@ public class Main {
         //M.getEigenVectors().print(0, 5);
         //M.getProjectionMatrix().print(0, 5);
         System.out.println("[+]\t Done");
-    }
+    }*/
 
 
 
@@ -156,7 +165,7 @@ public class Main {
      * Used to link between low level Image class and ImageVector(bean)
      * @param vector ImageVector of the image to convert.
      * @param path already existing file for the Image.
-     */
+     *//*
     public static Image getImage(ImageVector vector, String path){
         Image image = new Image(path);
 
@@ -173,5 +182,5 @@ public class Main {
         // apply modifications to Image
         image.setPixels(pixels);
         return image;
-    }
+    }*/
 }
