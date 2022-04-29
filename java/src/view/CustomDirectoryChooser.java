@@ -18,7 +18,7 @@ public class CustomDirectoryChooser extends Observable {
 
     private File directory = null;
 
-    Button button = null;
+    private Button button = null;
 
     public CustomDirectoryChooser(Stage s, String placeholder) {
         input = new TextField();

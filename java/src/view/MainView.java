@@ -199,9 +199,11 @@ public class MainView extends Application {
                     testingDirectoryChooser.getDirectory().listFiles()
             ));
             //TODO: real thread usage : check synchronisation and update components
+            controller.extractTest(testingDirectoryChooser.getDirectory());
+            /*
             new Thread(() -> {
                 controller.extractTest(testingDirectoryChooser.getDirectory());
-            }).start();
+            }).start();*/
         }
     }
 }

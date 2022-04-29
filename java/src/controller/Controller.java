@@ -22,8 +22,8 @@ public class Controller {
 
     private double successRate = -1;
 
-    //public static final double EPSILON = 0.31;
-    public static final double EPSILON = 10000;
+    public static final double EPSILON = 0.31;
+    //public static final double EPSILON = 10000;
 
     public void extractLearn(File directory){
         mappy = Acp.extractPicturesVectors(directory.getPath());
@@ -44,10 +44,12 @@ public class Controller {
     }
 
     public void extractTest(File directory){
-        testing = Acp.extractPicturesVectors(directory.getPath());
-        testing = Acp.projectImages(matrix, testing);
+        if(mappy != null){
+            testing = Acp.extractPicturesVectors(directory.getPath());
+            testing = Acp.projectImages(matrix, testing);
 
-        mappy = Acp.projectImages(matrix, mappy);
+            mappy = Acp.projectImages(matrix, mappy);
+        }
     }
 
     public void compareDistances(){
