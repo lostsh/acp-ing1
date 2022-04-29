@@ -46,7 +46,7 @@ public class Comparison {
     	for (String s : test.keySet()) {
         	//iterate through all images for that person
             for (ImageVector v : test.get(s)) {
-            	//System.out.println("Person with ID number " + s + " is getting tested");
+            	System.out.println("Person with ID number " + s + " is getting tested");
             	id=compare(v, learn, epsilon);
             	
             	//assuming that ID numbers for people not in learn will be greater than the max ID number for people in Learn
