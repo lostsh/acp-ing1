@@ -54,7 +54,11 @@ public class Controller extends Observable {
     }
 
     public void saveAverageFace() {
-        saveAverageFace("../BDD/cropped&gray/average.jpg");
+        saveAverageFace(getAverageImagePath());
+    }
+
+    public String getAverageImagePath(){
+        return "../BDD/cropped&gray/average.jpg";
     }
 
     public void extractTest(File directory){
