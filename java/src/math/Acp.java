@@ -1,6 +1,7 @@
 package math;
 
 import Jama.Matrix;
+import data.DataSerialize;
 import data.Image;
 import data.ImageVector;
 
@@ -18,10 +19,16 @@ public class Acp {
      */
     public static HashMap<String, ArrayList<ImageVector>> extractPicturesVectors(String directory){
         HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+        DataSerialize dataSerialize = new DataSerialize(new File(directory+"/vectors.ser"));
 
-        File picsDir = new File(directory);
+        if(dataSerialize.exist()){
+			dataSerialize.unSerialize();
+			return dataSerialize.getVectors();
+		}
 
-        if(picsDir.listFiles() != null) {
+		File picsDir = new File(directory);
+
+		if(picsDir.listFiles() != null) {
             for (File f : picsDir.listFiles()) {
                 if (f.isFile() && isImage(f.getName())) {
 
@@ -41,7 +48,12 @@ public class Acp {
             System.err.println("[!]\tNot Found or Empty directory");
         }
         // remove in prod (just for debug)
-        if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" files.");
+        if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" person.");
+
+        // Save the extracted data
+        dataSerialize.setVectors(vectors);
+        dataSerialize.serialize();
+
         return vectors;
     }
     

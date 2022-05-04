@@ -28,3 +28,6 @@ bin/
 .project
 
 /.metadata/
+
+## Project serialisation files
+**.ser

@@ -20,13 +20,4 @@ public class Main extends Application {
         primaryStage.setTitle("Face recognition");
         primaryStage.show();
     }
-    /*
-    public static void main(String[] args) {
-        Controller c = new Controller();
-        c.extractLearn(new File("../BDD/cropped&gray/learn"));
-        c.saveAverageFace();
-        c.extractTest(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
-        c.compareDistances();
-        System.out.println(c.getSuccessRate());
-    }*/
 }
