@@ -15,9 +15,11 @@ public class Controller extends Observable {
     /**
      * Contains learned matrix
      */
+    private File learningDirectory = null;
     private ArrayList<File> learningFiles = null;
     private HashMap<String, ArrayList<ImageVector>> mappy = null;
 
+    private File testingDirectory = null;
     private ArrayList<File> testingFiles = null;
     private HashMap<String, ArrayList<ImageVector>> testing = null;
 
@@ -28,20 +30,39 @@ public class Controller extends Observable {
     public static final double EPSILON = 0.31;
     //public static final double EPSILON = 10000;
 
-    public void extractLearn(File directory){
-        learningFiles = new ArrayList<>();
-        for (File f : directory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) learningFiles.add(f);
-        // extract image vectors
-        mappy = Acp.extractPicturesVectors(directory.getPath());
-        //learn();
+    public void update(){
+        setChanged();
+        notifyObservers();
+    }
+
+    public void setLearningDirectory(File directory){
+        learningDirectory = directory;
         this.setChanged();
-        this.notifyObservers(learningFiles);
+        this.notifyObservers(learningDirectory);
+    }
+
+    public boolean isLearningDirectory(){ return learningDirectory != null; }
+
+    public void extractLearn(){
+        if(learningDirectory != null){
+            learningFiles = new ArrayList<>();
+            for (File f : learningDirectory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) learningFiles.add(f);
+            // extract image vectors
+            mappy = Acp.extractPicturesVectors(learningDirectory.getPath());
+            //learn();
+            this.setChanged();
+            this.notifyObservers(learningFiles);
+        }
     }
 
     public void learn(){
         matrix = Acp.getEigenMatrix(40, mappy);
         this.setChanged();
         this.notifyObservers();
+    }
+
+    public boolean isLearned(){
+        return matrix != null;
     }
 
     public void saveAverageFace(String savePath){
@@ -61,27 +82,28 @@ public class Controller extends Observable {
         return "../BDD/cropped&gray/average.jpg";
     }
 
-    public void extractTest(File directory){
-        if(mappy != null){
-            testing = Acp.extractPicturesVectors(directory.getPath());
-            testingFiles = new ArrayList<>();
-            for (File f : directory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) testingFiles.add(f);
+    public void setTestingDirectory(File directory){
+        this.testingDirectory = directory;
+    }
 
-            //testing = Acp.projectImages(matrix, testing);
+    public boolean isTestingDirectory(){ return testingDirectory != null; }
 
-            //mappy = Acp.projectImages(matrix, mappy);
-
-            this.setChanged();
-            this.notifyObservers();
-        }
+    public void extractTest(){
+        testing = Acp.extractPicturesVectors(testingDirectory.getPath());
+        testingFiles = new ArrayList<>();
+        for (File f : testingDirectory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) testingFiles.add(f);
+        this.setChanged();
+        this.notifyObservers();
     }
 
     public void test(){
-        testing = Acp.projectImages(matrix, testing);
-        mappy = Acp.projectImages(matrix, mappy);
+        if(mappy != null && testing != null && matrix != null){
+            testing = Acp.projectImages(matrix, testing);
+            mappy = Acp.projectImages(matrix, mappy);
 
-        this.setChanged();
-        this.notifyObservers();
+            this.setChanged();
+            this.notifyObservers(true);
+        }
     }
 
     public void compareDistances(){
@@ -90,7 +112,7 @@ public class Controller extends Observable {
             successRate = successRate*100;
 
             this.setChanged();
-            this.notifyObservers();
+            this.notifyObservers(true);
         }
     }
 

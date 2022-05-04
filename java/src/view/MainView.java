@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MainView extends BorderPane{
 
@@ -35,6 +37,7 @@ public class MainView extends BorderPane{
     CustomDirectoryChooser testingDirectoryChooser;
     Button runRecognitionExtraction;
     Button runRecognition;
+    Label testingStatusIndicator;
     Label recognitionRateIndicator;
 
     Controller controller;
@@ -45,8 +48,11 @@ public class MainView extends BorderPane{
 
         this.setCenter(createCenter());
         this.setLeft(createLeft());
-        controller.extractLearn(new File("../BDD/cropped&gray/learn"));
-        controller.extractTest(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
+
+        //controller.setLearningDirectory(new File("../BDD/cropped&gray/learn"));
+        //controller.extractLearn();
+        //controller.extractTest(new File("../BDD/cropped&gray/test/newphotosofpeopleinLearn"));
+        controller.update();
     }
 
     private Pane createLeft(){
@@ -74,18 +80,15 @@ public class MainView extends BorderPane{
         p.setPadding(new Insets(0, 5, 5, 0));
         p.setAlignment(Pos.BASELINE_CENTER);
 
+        //
         // Top part : learning
+        //
         HBox top = new HBox(5);
         top.setPrefWidth(700);
         top.setPrefHeight(200);
         top.setStyle("-fx-border-color: black; -fx-border-width: 1px; -fx-border-radius: 2px;");
         top.setPadding(new Insets(5));
         top.setAlignment(Pos.CENTER);
-        // Bottom part : testing
-        HBox btm = new HBox(5);
-        btm.setPrefSize(top.getPrefWidth(), top.getPrefHeight());
-        btm.setStyle(top.getStyle());
-        btm.setPadding(top.getPadding());
 
         // ImageView container layout
         HBox avgImContainer = new HBox();
@@ -102,61 +105,97 @@ public class MainView extends BorderPane{
         avgImContainer.setAlignment(Pos.CENTER_RIGHT);
 
         // input layout
-        /*
         HBox leftContainer = new HBox(5);
         leftContainer.setMaxWidth(420);
         leftContainer.setPrefWidth(420);
         leftContainer.setAlignment(Pos.CENTER_LEFT);
+
         VBox v = new VBox(30);
-        HBox h = new HBox(100);
-        statusIndicator = new Label("Status : Standby");
-        Button learnLauncher = new Button("Learn");
-        learnLauncher.setOnAction(new EventHandler<ActionEvent>() {
+        learningDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Learning directory");
+        //TODO : add a controller to update the controller leanring directory
+        learningDirectoryChooser.addObserver(new Observer() {
             @Override
-            public void handle(ActionEvent event) {
-                if(MainViewOld.this.learningDirectoryChooser.isValid()){
-                    //TODO: think where to put indication on compute operations
-                    //maybe threading
-                    MainViewOld.this.statusIndicator.setText("Status : Learning");
-                    boolean status = MainViewOld.this.controller.saveAverageFace();
-                    averageImage.setImage(new Image(new File("../BDD/cropped&gray/average.jpg").toURI().toString()));
-                    MainViewOld.this.statusIndicator.setText("Status : "+(status?"Learned":"Failed"));
-                }
+            public void update(Observable o, Object arg) {
+                controller.setLearningDirectory(((CustomDirectoryChooser) o).getDirectory());
             }
         });
-        h.getChildren().addAll(learnLauncher, statusIndicator);
-        h.setAlignment(Pos.BOTTOM_LEFT);
-        v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser.getPane(), h);
+
+        HBox h = new HBox(100);
+
+        // Button launch file extraction
+        runLearningExtraction = new Button("Extract");
+        ButtonLearningExtractionController learningExtractionController = new ButtonLearningExtractionController(controller, runLearningExtraction);
+        runLearningExtraction.setOnAction(learningExtractionController);
+        controller.addObserver(learningExtractionController);
+        h.getChildren().add(runLearningExtraction);
+
+        // Button launch learning
+        runLearning = new Button("Learn");
+        ButtonLearningController learningController = new ButtonLearningController(controller, runLearning);
+        runLearning.setOnAction(learningController);
+        controller.addObserver(learningController);
+        h.getChildren().add(runLearning);
+
+        // Label status
+        learningStatusIndicator = new Label();
+        controller.addObserver(new LabelLearningStatusController(controller, learningStatusIndicator));
+
+        v.getChildren().addAll(new Label("Learning files"), learningDirectoryChooser.getPane(), h, learningStatusIndicator);
 
         leftContainer.getChildren().add(v);
-
         // adding layouts to top part of the center
         top.getChildren().addAll(leftContainer, avgImContainer);
 
-        */
-        // bottom
+        //
+        // Bottom part : testing
+        //
+        HBox btm = new HBox(5);
+        btm.setPrefSize(top.getPrefWidth(), top.getPrefHeight());
+        btm.setStyle(top.getStyle());
+        btm.setPadding(top.getPadding());
 
-        /*
-        VBox vb = new VBox(30);
-        HBox hb = new HBox(100);
-        recognitionRate = new Label("Recognition rate : ?%");
-        Button testingLauncher = new Button("Run");
-        testingLauncher.setOnAction(new EventHandler<ActionEvent>() {
+        VBox vb = new VBox(22);
+        testingDirectoryChooser = new CustomDirectoryChooser(primaryStage, "Testing directory");
+        testingDirectoryChooser.addObserver(new Observer() {
             @Override
-            public void handle(ActionEvent event) {
-                if (MainViewOld.this.testingDirectoryChooser.isValid()){
-                    MainViewOld.this.recognitionRate.setText("Recognition rate : any%");
-                    MainViewOld.this.controller.compareDistances();
-                    MainViewOld.this.recognitionRate.setText("Recognition rate : "+
-                            MainViewOld.this.controller.getSuccessRate() +"%");
-                }
+            public void update(Observable o, Object arg) {
+                controller.setTestingDirectory(((CustomDirectoryChooser) o).getDirectory());
             }
         });
-        hb.getChildren().addAll(testingLauncher, recognitionRate);
-        hb.setAlignment(Pos.BOTTOM_LEFT);
-        vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser.getPane(), hb);
+
+        HBox hb = new HBox(100);
+
+        // Button extract testing files
+        runRecognitionExtraction = new Button("Extract");
+        ButtonTestingExtractionController testingExtractionController = new ButtonTestingExtractionController(controller, runRecognitionExtraction);
+        runRecognitionExtraction.setOnAction(testingExtractionController);
+        controller.addObserver(testingExtractionController);
+        hb.getChildren().add(runRecognitionExtraction);
+
+        // Button run testing
+        runRecognition = new Button("Run");
+        ButtonTestingController testingController = new ButtonTestingController(controller, runRecognition);
+        runRecognition.setOnAction(testingController);
+        controller.addObserver(testingController);
+        hb.getChildren().add(runRecognition);
+
+        // Label status
+        testingStatusIndicator = new Label();
+        controller.addObserver(new LabelTestingStatusController(controller, testingStatusIndicator));
+
+        //TODO : reconition rate
+        recognitionRateIndicator = new Label();
+        controller.addObserver(new LabelController(controller, recognitionRateIndicator) {
+            @Override
+            public void update(Observable o, Object arg) {
+                label.setText("Recognition Rate : ?%");
+                if(arg instanceof Boolean) label.setText("Recognition Rate : "+controller.getSuccessRate()+"%");
+            }
+        });
+
+        vb.getChildren().addAll(new Label("Test files"), testingDirectoryChooser.getPane(), hb, testingStatusIndicator, recognitionRateIndicator);
         btm.getChildren().add(vb);
-        */
+
         p.getChildren().addAll(top, btm);
         return p;
     }

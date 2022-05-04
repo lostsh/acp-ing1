@@ -56,10 +56,12 @@ public class CustomDirectoryChooser extends Observable {
             chooser.setTitle("Choose directory");
             chooser.setInitialDirectory(new File("../"));
             CustomDirectoryChooser.this.directory = chooser.showDialog(this.stage);
-            CustomDirectoryChooser.this.input.
-                    setText(CustomDirectoryChooser.this.directory.toString());
-            CustomDirectoryChooser.this.setChanged();
-            CustomDirectoryChooser.this.notifyObservers();
+            if(null != CustomDirectoryChooser.this.directory){
+                CustomDirectoryChooser.this.input.
+                        setText(CustomDirectoryChooser.this.directory.toString());
+                CustomDirectoryChooser.this.setChanged();
+                CustomDirectoryChooser.this.notifyObservers();
+            }
         }
     }
 }
