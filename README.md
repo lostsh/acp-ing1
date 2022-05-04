@@ -3,6 +3,11 @@ Projet ─ Projet de Reconnaissance faciale par Analyse en composantes principal
 
 Je suis une fraise <3
 
+## Descriptif de version 
+
+Cette version est munie d'une interface modulaire, articulée autours d'un controleur principal.
+
+Les donnes extraites sont serialisés lors de la première extraction, puis lors de l'extraction suivante les données sont directiontement déserialisés.
 
 ## Tips Pour l'oral de Vendredi:
 :warning: Maîtriser parfaitement tout les termes que on emploi. *(ils peuvent poser des question dessus)*
