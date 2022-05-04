@@ -176,7 +176,7 @@ public class MainView extends BorderPane{
         testingStatusIndicator = new Label();
         controller.addObserver(new LabelTestingStatusController(controller, testingStatusIndicator));
 
-        //TODO : reconition rate
+        //TODO : recognition rate
         recognitionRateIndicator = new Label();
         controller.addObserver(new LabelController(controller, recognitionRateIndicator) {
             @Override
