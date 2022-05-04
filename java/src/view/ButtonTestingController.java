@@ -14,7 +14,7 @@ public class ButtonTestingController extends ButtonController{
 
     @Override
     public void update(Observable o, Object arg) {
-        button.setDisable(!controller.isTestingDirectory() || controller.getTestingFiles() == null);
+        button.setDisable(!controller.isTestingDirectory() || controller.getTestingFiles() == null || !controller.isLearned());
     }
 
     @Override
