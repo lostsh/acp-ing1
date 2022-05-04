@@ -84,16 +84,20 @@ public class Controller extends Observable {
 
     public void setTestingDirectory(File directory){
         this.testingDirectory = directory;
+        this.setChanged();
+        this.notifyObservers(testingDirectory);
     }
 
     public boolean isTestingDirectory(){ return testingDirectory != null; }
 
     public void extractTest(){
-        testing = Acp.extractPicturesVectors(testingDirectory.getPath());
-        testingFiles = new ArrayList<>();
-        for (File f : testingDirectory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) testingFiles.add(f);
-        this.setChanged();
-        this.notifyObservers();
+        if(testingDirectory != null) {
+            testing = Acp.extractPicturesVectors(testingDirectory.getPath());
+            testingFiles = new ArrayList<>();
+            for (File f : testingDirectory.listFiles()) if (f.isFile() && Acp.isImage(f.getName())) testingFiles.add(f);
+            this.setChanged();
+            this.notifyObservers();
+        }
     }
 
     public void test(){

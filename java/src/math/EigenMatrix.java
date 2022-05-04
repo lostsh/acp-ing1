@@ -1,11 +1,9 @@
 package math;
 
+import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import data.ImageVector;
 
 import java.util.ArrayList;
-
-import Jama.EigenvalueDecomposition;
 
 public class EigenMatrix {
 	

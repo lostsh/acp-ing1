@@ -1,13 +1,12 @@
 package math;
 
+import Jama.Matrix;
 import data.Image;
 import data.ImageVector;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import Jama.Matrix;
 
 
 public class Acp {

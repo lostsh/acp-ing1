@@ -1,10 +1,10 @@
 package data;
 
+import Jama.Matrix;
+
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
-
-import Jama.Matrix;
 
 /**
  * Contain vectorized image.
