@@ -1,16 +1,17 @@
 package data;
 
+import Jama.Matrix;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
-
-import Jama.Matrix;
 
 /**
  * Contain vectorized image.
  * Bean to be used everywhere we need to manipulate the image.
  */
-public class ImageVector {
+public class ImageVector implements Serializable {
 
     /**
      * Vector is a double array

@@ -1,13 +1,11 @@
 package math;
 
+import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import data.ImageVector;
 
 import java.util.ArrayList;
 
-import Jama.EigenvalueDecomposition;
-
-public class eigenMatrix {
+public class EigenMatrix {
 	
 	private Matrix A;
 	private Matrix transA;
@@ -19,7 +17,7 @@ public class eigenMatrix {
 	 * Create the eigenValue matrix, eigenVector matrix and projection matrix, while keeping only the k most important vectors and values only
 	 */
 	
-	public eigenMatrix(Matrix A, int k) {
+	public EigenMatrix(Matrix A, int k) {
 		this.A = A;
 		transA = this.A.transpose();
 		

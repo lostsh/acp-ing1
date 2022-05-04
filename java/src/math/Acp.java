@@ -1,13 +1,13 @@
 package math;
 
+import Jama.Matrix;
+import data.DataSerialize;
 import data.Image;
 import data.ImageVector;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import Jama.Matrix;
 
 
 public class Acp {
@@ -19,10 +19,16 @@ public class Acp {
      */
     public static HashMap<String, ArrayList<ImageVector>> extractPicturesVectors(String directory){
         HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
+        DataSerialize dataSerialize = new DataSerialize(new File(directory+"/vectors.ser"));
 
-        File picsDir = new File(directory);
+        if(dataSerialize.exist()){
+			dataSerialize.unSerialize();
+			return dataSerialize.getVectors();
+		}
 
-        if(picsDir.listFiles() != null) {
+		File picsDir = new File(directory);
+
+		if(picsDir.listFiles() != null) {
             for (File f : picsDir.listFiles()) {
                 if (f.isFile() && isImage(f.getName())) {
 
@@ -42,11 +48,16 @@ public class Acp {
             System.err.println("[!]\tNot Found or Empty directory");
         }
         // remove in prod (just for debug)
-        if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" files.");
+        if(true) System.out.println("[+]\tExtract finished.\n\tExtracted "+vectors.keySet().size()+" person.");
+
+        // Save the extracted data
+        dataSerialize.setVectors(vectors);
+        dataSerialize.serialize();
+
         return vectors;
     }
     
-    public static HashMap<String, ArrayList<ImageVector>> projectImages(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    public static HashMap<String, ArrayList<ImageVector>> projectImages(EigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
     	for (String ivName : map.keySet()) {
     		ArrayList<ImageVector> ivList = map.get(ivName);
@@ -64,7 +75,7 @@ public class Acp {
         return vectors;
     }
     
-    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(eigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
+    public static HashMap<String, ArrayList<ImageVector>> projectImagesAlternativ(EigenMatrix M, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> vectors = new HashMap<>();
     	ImageVector avgVec = averageFace(map);
     	ArrayList<Matrix> eigenVectorList = M.getEigenVectorsList();
@@ -82,10 +93,10 @@ public class Acp {
     }
     
     
-    public static eigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
+    public static EigenMatrix getEigenMatrix(int k, HashMap<String, ArrayList<ImageVector>> map) {
     	HashMap<String, ArrayList<ImageVector>> mappy = normalizeVector(map);
     	Matrix transA = createMatrixTrans(mappy);
-        return (new eigenMatrix( transA.transpose(), k ));
+        return (new EigenMatrix( transA.transpose(), k ));
     	
     }
 
